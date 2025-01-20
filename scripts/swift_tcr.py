@@ -5,25 +5,6 @@ Date: 25-09-2024
 Author: Nils Smit
 """
 
-"""
-Todo list:
-- change the output of prepare.py and ANARCI to the output directory and not the input directory (could use shutil.move for prepare because not sure i can change the output directory) [Fixed]
-- Add comments to the code [Fixed]
-- Change pdb2ms.py to only use the results of initial_placement.py and not all the pdb files in the directory [fixed]
-- run piper using multiple cores (Found out piper already does this) [Fixed]
-- Let the user input the amount of cores, also check the amount of cores in other scripts so that it is passed to all [fixed]
-- Fix that pairwise_rmsd.py only uses the amount of cores that the user inputs [Fixed]
-- Show which procces is done/running [Fixed]
-- In clustering.py also give the user the posibility to input threshold in function create_dict() Default is 9. [Fixed]
-- Create a specific output directory for the results of the pipeline using the output-prefix argument and combining it with the output directory [fixed]
-- Fixed a bug in the initial_placement.py script where the chain IDs were not changed correctly because they first change C to D and then D to E where all chains end up as E [Fixed]
-- remove the pdb file prints to stop clogging the output from the pipeline in merge_pdbs.py [Fixed]
-- Discuss with the team if we should remove the directory part of the clustering.py script because it is never used.
-- Add a way in the Readme to install the tools that are used in the pipeline.
-- Put all os.system commands in subprocess.run commands. [fixed]
-- multiprocess the merge_pdbs.py script [fixed]
-"""
-
 import os.path
 import os
 import sys
@@ -55,10 +36,16 @@ if __name__ == "__main__":
     # Get the arguments from the user
     args = pipeline_handler.get_arguments()
     
-    # Gets the reference files
-    reference_ligand = os.path.realpath("ref/2bnr_r_u.pdb") 
-    reference_receptor = os.path.realpath("ref/2bnr_l_u.pdb")
-    rotations = os.path.realpath("rotations_and_restraints/filtered_cr_in_60.prm")
+    # Gets the reference files and rotations based of if it is a MHC class 1 or 2
+    if args.mhc_class_2:
+        reference_ligand = os.path.realpath("ref/pmhc_2/2iam_r_u.pdb") 
+        reference_receptor = os.path.realpath("ref/pmhc_2/2iam_l_u.pdb")
+        rotations = os.path.realpath("rotations_and_restraints/pmhc_2/reduced_sampling_mhc2.prm")
+    else:
+        reference_ligand = os.path.realpath("ref/pmhc_1/2bnr_r_u.pdb")
+        reference_receptor = os.path.realpath("ref/pmhc_1/2bnr_l_u.pdb")
+        rotations = os.path.realpath("rotations_and_restraints/pmhc_1/filtered_cr_in_60.prm")
+    
     restraint_path =  os.path.realpath("rotations_and_restraints/restraintsDE.json")
     amount_of_models = args.models
     output_path = os.path.join(os.path.realpath(args.output), args.outprefix)
@@ -180,7 +167,7 @@ if __name__ == "__main__":
     # for now postfilter is not used
     #apply_results.apply_results_main(amount_of_models, None, None,  args.outprefix, os.path.join(output_path, args.outprefix), os.path.join(output_path,rotations), os.path.join(output_path,ligand), cores)
     
-    apply_results.apply_results_main(1000, None, None,  args.outprefix, os.path.join(output_path, "ft.002.00"), os.path.join(output_path,rotations), os.path.join(output_path,ligand), cores)
+    apply_results.apply_results_main(1000, None, None,  args.outprefix, os.path.join(output_path, "ft.000.00"), os.path.join(output_path,rotations), os.path.join(output_path,ligand), cores)
     time_end_apply_results = time.time()
 
     print(f"Time taken for apply_results: {time_end_apply_results - time_start_apply_results} seconds")    

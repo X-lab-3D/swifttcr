@@ -14,7 +14,6 @@ import torch
 import torch.multiprocessing as mp
 import gradpose
 from tqdm import tqdm
-import re
 
 # Setting these to stop issues on the cluster
 mp.set_sharing_strategy('file_system')
