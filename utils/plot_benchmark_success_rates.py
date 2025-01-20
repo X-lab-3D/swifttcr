@@ -243,8 +243,7 @@ def make_rmsd_plot_all_at_one(l_dict, labels, rmsd_plot_name="rmsd_plot", base_n
     medium_patch_high = mpatches.Patch(color='darkblue', label='Medium: High')
 
     # Place legend further down under the plot
-    ax.legend(handles=[rigid_patch_acceptable, rigid_patch_medium, rigid_patch_high,
-                       medium_patch_acceptable, medium_patch_medium, medium_patch_high],
+    ax.legend(handles=[rigid_patch_acceptable, medium_patch_acceptable ,rigid_patch_medium,medium_patch_medium, rigid_patch_high, medium_patch_high],
               loc='upper center', bbox_to_anchor=(0.5, -0.50),  # Move the legend further down
               ncol=3, fontsize=8, frameon=True, fancybox=True)
 
@@ -253,7 +252,6 @@ def make_rmsd_plot_all_at_one(l_dict, labels, rmsd_plot_name="rmsd_plot", base_n
     plt.savefig(rmsd_plot_name+'.pdf', bbox_inches='tight', dpi=300)
 
     return colors
-
 
 
 def calculate_color_percentages(color_matrix, labels):
