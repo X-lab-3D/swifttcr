@@ -2,10 +2,9 @@
 Name: apply_results.py
 Function: This script is used to apply the results of the ftmap calculations to the pdb files. The script reads the results from the ftmap calculations and applies the results to the pdb files. The output is the pdb files with the results applied.
 Date: 25-09-2024
-Author: Yannick Aarts
+Author: Yannick Aarts, Nils Smit
 """
 
-from argparse import FileType
 import numpy as np
 from itertools import islice
 import linecache

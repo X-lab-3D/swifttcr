@@ -1,3 +1,14 @@
+"""
+Name: calc_average_energie.py
+Function: This script calculates the average total weighted energy for the top 5 entries in each .tsv file in a directory and saves the results to a new .tsv file.
+Date: 08-11-2024
+Author: Nils Smit
+"""
+
+"""
+Script can only be used if you want to filter it on a specific column name. otherwise use plot_energies_normalized.py
+"""
+
 import os
 import pandas as pd
 import sys

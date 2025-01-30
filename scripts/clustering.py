@@ -1,7 +1,7 @@
 """Script to cluster based on Cluspro
 
 Greedy clustering
-Author: Yannick Aarts
+Author: Yannick Aarts, Nils Smit
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5540229/pdf/nihms883869.pdf
 Cluspro paper:
 We calculate IRMSD values for each pair 
@@ -12,13 +12,9 @@ the first cluster. The members of this cluster are then removed, and we select t
 with the highest number of neighbors within the 9Å IRMSD radius among the remaining
 structures as the next cluster center. These neighbors will form the next cluster. Up to 30
 clusters are generated in this manner
-
-Example usage: python3 python_programs/clustering.py pipeline/ 7
-Iterates over directories with _60_ms or KB.
 """
 import csv
 from typing import List, Tuple
-from pathlib import Path
 
 def read_irmsd_values(file_path: str) -> List[Tuple[str, str, float]]:
     """Read the irmsd values from file and returns a list of tuples.

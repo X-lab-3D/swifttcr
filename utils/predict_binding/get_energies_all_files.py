@@ -5,6 +5,11 @@ Date: 08-11-2024
 Author: Nils Smit
 """
 
+"""
+Example usage:
+python get_energies_from_ft_file.py /path/to/input_dir /path/to/output_file.tsv energy_file_name
+"""
+
 import os
 import argparse
 

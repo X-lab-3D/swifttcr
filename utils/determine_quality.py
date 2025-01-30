@@ -5,6 +5,11 @@ Date: 11-11-2024
 Author: Nils Smit
 """
 
+"""
+Example usage:
+python determine_quality.py /path/to/sampling_results.tsv /path/to/output_file.tsv
+"""
+
 from sys import argv
 
 def parse_sampling_results(sampling_file):

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# Li Xue
-# 16-Mar-2023 17:22
 """
 Name: initial_placement.py
 Function: This script is used to superimpose the target TCR and p-MHC to the reference TCR and p-MHC. The script uses PyMOL to superimpose the structures and then finds the closest residue to the reference residues in the target structures. The script then changes the chain of the closest residues to the chain of the reference residues. The output is the superimposed structures with the chains renamed to the reference chains.

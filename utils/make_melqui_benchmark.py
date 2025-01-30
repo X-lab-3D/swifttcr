@@ -55,6 +55,10 @@ def read_tsv_file(tsv_file):
 
 def create_melqui_plot(tsv_file, outfilename):
     """Create a melquiplot based on the input TSV file.
+    
+    Args:
+        tsv_file (str): Path to the TSV file
+        outfilename (str): Path to the output file
     """
     # Read TSV data
     df = read_tsv_file(tsv_file)

@@ -2,7 +2,7 @@
 Name: pairwise_rmsd.py
 Function: This script calculates the pairwise RMSD between PDB files. The script can calculate the RMSD between all residues of two chains or only the interface residues of two chains. The output is a list of tuples with the RMSD values and a list of the file paths to the PDB files.
 Date: 25-09-2024
-Author: Kevin van Geemen
+Author: Kevin van Geemen, Nils Smit
 """
 import os
 import time

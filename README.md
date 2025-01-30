@@ -50,6 +50,8 @@ python3 scripts/swift_tcr.py -r example/input/benchmark_dataset/3w0w/3w0w_pmhc_r
 * [pdb2sql: 0.5.3](https://github.com/DeepRank/pdb2sql)
 * [Biopython: 1.84](https://biopython.org/)
 * [PDB2PQR: 3.6.1](https://github.com/Electrostatics/pdb2pqr)
+* [Matplotlib: 3.9.2](https://matplotlib.org/)
+* [Plotly: 5.24.1](https://plotly.com/)
 
 ## Output SwiftTCR
 
@@ -81,13 +83,6 @@ output
         ├── 3w0w_pmhc_renumbered_pnon_rename.pdb
         ├── clustering.txt
         ├── ft.000.00
-        ├── ft.001.00
-        ├── ft.002.00
-        ├── ft.003.00
-        ├── ft.004.00
-        ├── ft.005.00
-        ├── ft.006.00
-        ├── ft.007.00
         ├── irmsd.csv
         ├── merged
         │   └── merged_0.pdb

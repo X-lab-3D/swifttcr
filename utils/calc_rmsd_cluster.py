@@ -5,6 +5,11 @@ Date: 25-11-2024
 Author: Nils Smit, Yannick Aarts, Farzaneh Meimandi Parizi
 """
 
+"""
+Example usage:
+python calc_rmsd_all.py /path/to/pipeline_dir /path/to/reference_dir clustering.txt /path/to/output_base 4
+"""
+
 from pathlib import Path
 import sys
 import multiprocessing as mp

@@ -5,6 +5,11 @@ Date: 12-12-2024
 Author: Nils Smit
 """
 
+"""
+Example usage:
+python plot_energies_normalized.py /path/to/directory/with/energy/files
+"""
+
 import os
 import sys
 import pandas as pd

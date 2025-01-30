@@ -2,7 +2,7 @@
 Name: pdb2ms.py
 Function: Script to convert pdb files to ms files with selected attractive residues.
 Date: 04-06-2024
-Author: Yannick Aarts
+Author: Yannick Aarts, Nils Smit
 
 ms file format
     COLUMNS        DATA  TYPE    FIELD        DEFINITION
