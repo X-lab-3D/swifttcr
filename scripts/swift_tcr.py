@@ -17,8 +17,6 @@ import merge_pdbs
 import pairwise_rmsd
 import clustering
 import flip_alternative
-import io
-from contextlib import redirect_stdout
 import pipeline_handler
 import warnings
 import shutil

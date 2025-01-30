@@ -5,6 +5,11 @@ Date: 08-11-2024
 Author: Nils Smit
 """
 
+"""
+Example usage:
+python get_energies_from_clustering_data.py /path/to/input_dir /path/to/output_file.tsv clustering_file_name energy_file_name
+"""
+
 import os
 import re
 import argparse

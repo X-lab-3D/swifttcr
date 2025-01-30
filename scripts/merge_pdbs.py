@@ -1,12 +1,8 @@
 """
 Name: merge_pdbs.py
 Function: Script to merge pdb files and rename chains to A for receptor and D for ligand. The receptor (pMHC) has 3 chains A,B and C and the ligand (TCR) has 2 chains D and E.
-Date: 2021-07-07
-Author: Yannick Aarts
-"""
-
-"""
-For now had to remove pdb_tidy and the last pdb_merge because these caused the alternative residues to be placed after the normal residues. For now this works but I think it is better to run the pdb-tools scripts as functions so that we don't have to use the commandline and when we make it runnable via python functions we can also change the sorting algorithm so that they are sorted correctly with alternative residues first.
+Date: 2024-11-07
+Author: Yannick Aarts, Nils Smit
 """
 
 from pathlib import Path
@@ -86,7 +82,18 @@ def merge_pdbs_main(receptor, ligand, output_dir, num_cores):
 
     # Process receptor only once
     receptor_name = f"{p_rec.stem}_rename.pdb"
-    command = f"pdb_tidy {p_rec} | pdb_selchain -A,B,C | pdb_chain -A | pdb_reres -1 > {receptor_name}"
+    #command = f"pdb_tidy {p_rec} | pdb_selchain -A,B,C | pdb_chain -A | pdb_reres -1 > {receptor_name}"
+    command = (
+    "pdb_tidy {} | "  # Clean the PDB
+    "pdb_selchain -A | pdb_chain -A | pdb_reres -1000 > mhc_chainA.pdb; "  # Select chain A, rename to A, renumber starting from 1000
+    "pdb_tidy {} | "  # Clean the PDB again
+    "pdb_selchain -B | pdb_chain -A | pdb_reres -2000 > mhc_chainB.pdb; "  # Select chain B, rename to B, renumber starting from 2000
+    "cat mhc_chainA.pdb mhc_chainB.pdb > mhc.pdb; "  # Merge chain A and B into mhc.pdb
+    "pdb_tidy {} | "  # Clean the PDB again
+    "pdb_selchain -C | pdb_chain -A | pdb_reres -1 > pep.pdb; "  # Select chain C, rename to A, renumber starting from 1
+    "pdb_merge pep.pdb mhc.pdb | pdb_tidy > {}; "  # Properly concatenate mhc.pdb and pep.pdb into final pMHC.pdb
+    "rm mhc_chainA.pdb mhc_chainB.pdb mhc.pdb pep.pdb"  # Remove intermediate files
+    ).format(str(p_rec), str(p_rec), str(p_rec), receptor_name)
 
     # Run the receptor processing
     run_command(command)
@@ -104,15 +111,3 @@ def merge_pdbs_main(receptor, ligand, output_dir, num_cores):
             pool.starmap(process_ligand, [(f, receptor_name, p_out) for f in ligand_files], chunksize=chunksize)
     else:
         print("Ligand path is not a directory.")
-        
-        
-    # This command makes it so the peptide chain is seperated from chain A in the receptor because the peptide chain with the current code made part of the mhc and it tries to connect to it in pymol.
-    # This command doesn't work because in pairwise_rmsd.py it tries to pad the chains which crashes the programm so this will work once we replace gradpose with our own code.
-    # command = (
-    # "pdb_tidy {} | "  # Clean the PDB
-    # "pdb_selchain -A,B | pdb_chain -A | pdb_reres -1000 > mhc.pdb; "  # Select chains A and B, rename to A, renumber residues starting from 1000, and save as mhc.pdb
-    # "pdb_tidy {} | "  # Clean the PDB again
-    # "pdb_selchain -C | pdb_chain -A | pdb_reres -1 > pep.pdb; "  # Select chain C, rename to A, renumber starting from 1, and save as pep.pdb
-    # "pdb_merge pep.pdb mhc.pdb | pdb_tidy > {}; "  # Properly concatenate mhc.pdb and pep.pdb into pMHC.pdb, appending to the output
-    # "rm mhc.pdb pep.pdb"  # Remove intermediate files mhc.pdb and pep.pdb
-    # ).format(str(p_rec), str(p_rec), receptor_name)

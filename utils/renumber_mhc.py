@@ -6,6 +6,11 @@ Date: 10-10-2024
 Author: Nils Smit
 """
 
+"""
+Example usage:
+python renumber_mhc.py /path/to/mobile_pdb /path/to/reference_pmhc /path/to/output_pdb
+"""
+
 from typing import Dict, List
 import sys
 import os
