@@ -64,23 +64,14 @@ def process_tsv_data(tsv_files, directory_path):
     return processed_df
 
 def normalize_data(processed_df):
-    """Normalizes the energy data.
-    
-    Args:
-        processed_df (pd.DataFrame): Processed data for all TSV files.
-    
-    Returns:
-        pd.DataFrame: Normalized data sorted by total energy.
-    """
-    # Normalize the energy values
     columns_to_normalize = [
         "total weighted energy", "vdW energy", 
         "pairwise potential energy (unweighted)"
     ]
     
-    # Create a copy of the processed data
     normalized_df = processed_df.copy()
-    # Normalize the selected columns
+
+    # Step 1: Normalize all other energies first
     for col in columns_to_normalize:
         min_val = processed_df[col].min()
         max_val = processed_df[col].max()
@@ -89,7 +80,7 @@ def normalize_data(processed_df):
         else:
             normalized_df[col] = 1
 
-    # Normalize the vdW column
+    # Normalize vdW energy
     min_vdw = normalized_df['vdW energy'].min()
     max_vdw = normalized_df['vdW energy'].max()
     if max_vdw != min_vdw:
@@ -99,7 +90,7 @@ def normalize_data(processed_df):
     else:
         normalized_df['vdW energy'] = 1
     
-    # Normalize the coulombic column
+    # Normalize Coulombic energy
     min_coulombic = normalized_df['coulombic electrostatic energy'].min()
     max_coulombic = normalized_df['coulombic electrostatic energy'].max()
     if max_coulombic != min_coulombic:
@@ -110,7 +101,7 @@ def normalize_data(processed_df):
     else:
         normalized_df['coulombic electrostatic energy'] = 1
     
-    # Normalize the generalized Born approximation column
+    # Normalize Generalized Born energy
     min_gb = normalized_df['generalized Born approximation electrostatics energy'].min()
     max_gb = normalized_df['generalized Born approximation electrostatics energy'].max()
     if max_gb != min_gb:
@@ -120,13 +111,34 @@ def normalize_data(processed_df):
         )
     else:
         normalized_df['generalized Born approximation electrostatics energy'] = 1
+
+    # Step 2: Weight the energies (using unnormalized values)
+    coulombic_weight = 600
+    gb_weight = 60
+
+    # Apply weights to unnormalized energies before summing
+    normalized_df['Weighted Electrostatics'] = (
+        processed_df['coulombic electrostatic energy (unweighted)'] * coulombic_weight +
+        processed_df['generalized Born approximation electrostatics energy (unweighted)'] * gb_weight
+    )
+
+    # Step 3: Normalize the weighted electrostatics to ensure it's between 0 and 1
+    min_weighted = normalized_df['Weighted Electrostatics'].min()
+    max_weighted = normalized_df['Weighted Electrostatics'].max()
+    if max_weighted != min_weighted:
+        normalized_df['Weighted Electrostatics'] = 1 - (
+            (normalized_df['Weighted Electrostatics'] - min_weighted) / (max_weighted - min_weighted)
+        )
+    else:
+        normalized_df['Weighted Electrostatics'] = 1
     
-    # Normalize the pairwise potential column and set the total energy
+    # Step 4: Calculate the total energy, including the weighted electrostatics
     normalized_df['Total Energy'] = normalized_df[['total weighted energy', 'vdW energy',
                                                    'coulombic electrostatic energy', 
                                                    'generalized Born approximation electrostatics energy', 
-                                                   'pairwise potential energy (unweighted)']].sum(axis=1)
+                                                   'pairwise potential energy (unweighted)', 'Weighted Electrostatics']].sum(axis=1)
 
+    # Step 5: Sort by Total Energy
     normalized_df_sorted = normalized_df.sort_values(by='Total Energy', ascending=False)
     
     return normalized_df_sorted
@@ -267,57 +279,41 @@ def plot_weighted_and_normalized_electrostatics(normalized_df_sorted):
     Args:
         normalized_df_sorted (pd.DataFrame): Normalized and sorted data.
     """
-    # Define weights
-    coulombic_weight = 600
-    gb_weight = 60
-    
-    # Calculate weighted electrostatic energy
-    normalized_df_sorted['Weighted Electrostatics'] = (
-        normalized_df_sorted['coulombic electrostatic energy'] * coulombic_weight +
-        normalized_df_sorted['generalized Born approximation electrostatics energy'] * gb_weight
-    )
-    
-    # Normalize the weighted electrostatic energy
+    # Use the already calculated 'Weighted Electrostatics' from normalize_data()
+    # No need to recalculate it here.
+
     min_electrostatics = normalized_df_sorted['Weighted Electrostatics'].min()
     max_electrostatics = normalized_df_sorted['Weighted Electrostatics'].max()
     if max_electrostatics != min_electrostatics:
         normalized_df_sorted['Normalized Weighted Electrostatics'] = (
-            (max_electrostatics - normalized_df_sorted['Weighted Electrostatics']) /
-            (max_electrostatics - min_electrostatics)
+        (max_electrostatics - normalized_df_sorted['Weighted Electrostatics']) /
+        (max_electrostatics - min_electrostatics)
         )
     else:
         normalized_df_sorted['Normalized Weighted Electrostatics'] = 1
 
-    # Calculate new total energy for sorting
     normalized_df_sorted['New Total Energy'] = (
         normalized_df_sorted['total weighted energy'] + 
         normalized_df_sorted['Normalized Weighted Electrostatics']
     )
 
-    # Sort the dataframe by the new total energy
     sorted_data = normalized_df_sorted.sort_values(by='New Total Energy', ascending=False)
     
-    # Extract the required columns for plotting
     plot_data = sorted_data[['total weighted energy', 'Normalized Weighted Electrostatics']]
     
-    # Create a stacked bar plot
     fig, ax = plt.subplots(figsize=(12, 6))
     plot_data.plot(kind='bar', stacked=True, ax=ax, colormap='viridis')
     
-    # Set plot titles and labels
     ax.set_title('Normalized SwiftTCR Results', fontsize=18)
     ax.set_xlabel('Case', fontsize=14)
-    ax.set_ylabel('Normalized Energy Values', fontsize=14)
+    ax.set_ylabel('Normalized Values', fontsize=14)
     
-    # Set x-tick labels
     labels = sorted_data["Name"].str.replace('.tsv', '')
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels, rotation=0, ha='center', fontsize=14)
     
-    # Add a legend
-    ax.legend(title="Energy Type", loc='upper right', bbox_to_anchor=(1, 1), fontsize=14)
+    ax.legend(title="Metrics", loc='upper right', bbox_to_anchor=(1, 1), fontsize=14)
     
-    # Adjust layout and show plot
     plt.tight_layout()
     plt.show()
 
