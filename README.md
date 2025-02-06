@@ -9,7 +9,7 @@ Link to the paper: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27
 - Predict binding interactions between TCRs and peptide-MHC.
 - User-friendly command-line interface.
 - Efficient clustering algorithms for data analysis.
-- With 12 CPU cores it takes around 260 seconds.
+- With 12 CPU cores it takes around 200 seconds.
 
 ## Getting Started
 
