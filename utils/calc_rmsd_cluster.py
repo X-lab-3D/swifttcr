@@ -1,5 +1,5 @@
 """
-Name: calc_rmsd_all.py
+Name: calc_rmsd_cluster.py
 Function: Calculates the LRMSD, IRMSD and Fnat based on a reference and target structure. The RMSD is calculated by getting all the subdirectories in a given directory and getting from those subdirectories the merged directory which contains the files. The program know which reference to compare to because the reference should have the same name as the subdirectory only has the reference _renumberd added to it. The RMSD calculation is done by the tool DockQ.
 Date: 25-11-2024
 Author: Nils Smit, Yannick Aarts, Farzaneh Meimandi Parizi
@@ -7,15 +7,18 @@ Author: Nils Smit, Yannick Aarts, Farzaneh Meimandi Parizi
 
 """
 Example usage:
-python calc_rmsd_all.py /path/to/pipeline_dir /path/to/reference_dir clustering.txt /path/to/output_base 4
+python calc_rmsd_cluster.py /path/to/pipeline_dir /path/to/reference_dir clustering.txt /path/to/output_base 4
 """
 
 from pathlib import Path
 import sys
 import multiprocessing as mp
+from tempfile import NamedTemporaryFile
 import gc
 from DockQ.DockQ import load_PDB, run_on_all_native_interfaces
 import time
+import os
+import subprocess
 
 
 def main():
@@ -36,18 +39,81 @@ def main():
     tasks = []
     for model_identifier, decoys in model_dict.items():
         # Create the path to the reference model
-        reference = str(Path(reference_dir, model_identifier + "_renumb.pdb"))
+        raw_reference_path = Path(reference_dir, model_identifier + "_b.pdb")
+
+        with NamedTemporaryFile(suffix=f"_{model_identifier}_processed.pdb", delete=False) as temp_ref:
+            temp_ref_path = temp_ref.name
+        
+        # Process the reference into the temp file
+        process_pdb(raw_reference_path, temp_ref_path)
+
 
         for decoy in decoys:
             # Create the path to the decoy model
             val_path = str(Path(pipeline_dir, model_identifier, "merged", decoy))
             # Append task (function arguments) to the tasks list
-            tasks.append((reference, val_path, pipeline_dir, model_identifier))
+            tasks.append((temp_ref_path, val_path, pipeline_dir, model_identifier))
 
     # Process tasks in batches using Pool with map
     process_batches(tasks, max_threads, batch_size, outfile_base)
     time_end = time.time()
     print(f"DockQ calculations completed in {time_end - time_start:.2f} seconds.")
+
+
+def process_pdb(input_file: Path, output_file: Path):
+    """Processes a PDB file and writes the final merged output to output_file."""
+    
+    receptor_name = Path("pMHC.pdb")  # This is a temp intermediate file we clean up
+    
+    with NamedTemporaryFile(delete=False) as temp_D, \
+         NamedTemporaryFile(delete=False) as temp_E, \
+         NamedTemporaryFile(delete=False) as temp_ligand:
+        
+        try:
+            command_mhc = (
+                f"pdb_tidy {input_file} | "
+                f"pdb_selchain -A | pdb_chain -A | pdb_reres -1000 > mhc_chainA.pdb; "
+                f"pdb_tidy {input_file} | "
+                f"pdb_selchain -B | pdb_chain -B | pdb_reres -2000 > mhc_chainB.pdb; "
+                f"cat mhc_chainA.pdb mhc_chainB.pdb > mhc.pdb; "
+                f"pdb_tidy {input_file} | "
+                f"pdb_selchain -C | pdb_chain -A | pdb_reres -1 > pep.pdb; "
+                f"pdb_merge pep.pdb mhc.pdb | pdb_tidy > {receptor_name}; "
+                f"rm mhc_chainA.pdb mhc_chainB.pdb mhc.pdb pep.pdb"
+            )
+            run_command(command_mhc)
+
+            command_chainE = f"pdb_tidy {input_file} | pdb_selchain -E | pdb_shiftres -2000 | pdb_chain -D > {temp_E.name}"
+            command_chainD = f"pdb_tidy {input_file} | pdb_selchain -D > {temp_D.name}"
+            command_merge_DE = f"pdb_merge {temp_D.name} {temp_E.name} > {temp_ligand.name}"
+
+            run_command(command_chainE)
+            run_command(command_chainD)
+            run_command(command_merge_DE)
+
+            merge_command = f"cat {receptor_name} {temp_ligand.name} | grep '^ATOM ' > {output_file}"
+            run_command(merge_command)
+
+            print(f"Processed reference: {input_file} → {output_file}")
+
+        finally:
+            os.unlink(temp_D.name)
+            os.unlink(temp_E.name)
+            os.unlink(temp_ligand.name)
+            if receptor_name.exists():
+                os.remove(receptor_name)
+
+
+def run_command(command):
+    """Runs a shell command and handles errors."""
+    try:
+        result = subprocess.run(command, shell=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, text=True, check=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Error while running command: {command}")
+        print(f"Error message: {e.stderr}")
+        raise
 
 
 def process_batches(tasks, max_threads, batch_size, outfile_base):

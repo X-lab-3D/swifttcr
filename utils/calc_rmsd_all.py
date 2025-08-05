@@ -14,8 +14,10 @@ from pathlib import Path
 import sys
 import multiprocessing as mp
 import gc
-from DockQ.DockQ import load_PDB, run_on_all_native_interfaces
 import time
+import os
+from tempfile import NamedTemporaryFile
+from DockQ.DockQ import load_PDB, run_on_all_native_interfaces
 
 
 def main():
@@ -33,20 +35,88 @@ def main():
 
     # Prepare tasks for multiprocessing
     tasks = []
+    temp_ref_paths = []
     for model_identifier, decoys in model_dict.items():
         # Create the path to the reference model
-        reference = str(Path(reference_dir, model_identifier + "_renumb.pdb"))
+        raw_reference_path = Path(reference_dir, model_identifier + "_b.pdb")
+
+        with NamedTemporaryFile(suffix=f"_{model_identifier}_processed.pdb", delete=False) as temp_ref:
+            temp_ref_path = Path(temp_ref.name)
+
+        process_pdb(raw_reference_path, temp_ref_path)
+        temp_ref_paths.append(temp_ref_path)
 
         for decoy in decoys:
             # Create the path to the decoy model
             val_path = str(decoy)
             # Append task (function arguments) to the tasks list
-            tasks.append((reference, val_path, pipeline_dir, model_identifier))
+            tasks.append((str(temp_ref_path), val_path, pipeline_dir, model_identifier))
 
     # Process tasks in batches using Pool with map
     process_batches(tasks, max_threads, batch_size, outfile_base)
     time_end = time.time()
+    
+    for ref_file in temp_ref_paths:
+        try:
+            os.remove(ref_file)
+        except Exception as e:
+            print(f"Could not remove temp file {ref_file}: {e}")
     print(f"DockQ calculations completed in {time_end - time_start:.2f} seconds.")
+
+
+def run_command(command):
+    """Runs a shell command and handles errors."""
+    import subprocess
+    try:
+        result = subprocess.run(command, shell=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, text=True, check=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Error while running command: {command}")
+        print(f"Error message: {e.stderr}")
+        raise
+
+
+def process_pdb(input_file: Path, output_file: Path):
+    """Processes a PDB file and writes the final merged output to output_file."""
+    receptor_name = Path("pMHC.pdb")
+
+    with NamedTemporaryFile(delete=False) as temp_D, \
+         NamedTemporaryFile(delete=False) as temp_E, \
+         NamedTemporaryFile(delete=False) as temp_ligand:
+        try:
+            command_mhc = (
+                f"pdb_tidy {input_file} | "
+                f"pdb_selchain -A | pdb_chain -A | pdb_reres -1000 > mhc_chainA.pdb; "
+                f"pdb_tidy {input_file} | "
+                f"pdb_selchain -B | pdb_chain -B | pdb_reres -2000 > mhc_chainB.pdb; "
+                f"cat mhc_chainA.pdb mhc_chainB.pdb > mhc.pdb; "
+                f"pdb_tidy {input_file} | "
+                f"pdb_selchain -C | pdb_chain -A | pdb_reres -1 > pep.pdb; "
+                f"pdb_merge pep.pdb mhc.pdb | pdb_tidy > {receptor_name}; "
+                f"rm mhc_chainA.pdb mhc_chainB.pdb mhc.pdb pep.pdb"
+            )
+            run_command(command_mhc)
+
+            command_chainE = f"pdb_tidy {input_file} | pdb_selchain -E | pdb_shiftres -2000 | pdb_chain -D > {temp_E.name}"
+            command_chainD = f"pdb_tidy {input_file} | pdb_selchain -D > {temp_D.name}"
+            command_merge_DE = f"pdb_merge {temp_D.name} {temp_E.name} > {temp_ligand.name}"
+
+            run_command(command_chainE)
+            run_command(command_chainD)
+            run_command(command_merge_DE)
+
+            merge_command = f"cat {receptor_name} {temp_ligand.name} | grep '^ATOM ' > {output_file}"
+            run_command(merge_command)
+
+            print(f"Processed reference: {input_file} → {output_file}")
+
+        finally:
+            os.unlink(temp_D.name)
+            os.unlink(temp_E.name)
+            os.unlink(temp_ligand.name)
+            if receptor_name.exists():
+                os.remove(receptor_name)
 
 
 def process_batches(tasks, max_threads, batch_size, outfile_base):

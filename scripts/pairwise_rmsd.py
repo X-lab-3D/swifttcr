@@ -14,6 +14,8 @@ import torch
 import torch.multiprocessing as mp
 import gradpose
 from tqdm import tqdm
+import random
+import numpy as np
 
 # Setting these to stop issues on the cluster
 mp.set_sharing_strategy('file_system')
@@ -343,6 +345,12 @@ def calc_rmsd(models_path, rmsd_path, chain_1, chain_2, interface_cutoff=10., n_
     os.environ["MKL_NUM_THREADS"] = "1"
     os.environ["OPENBLAS_NUM_THREADS"] = "1"
     torch.set_num_threads(1)
+    
+    seed = 1
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.use_deterministic_algorithms(True)
 
     print("RMSD TYPE:", type)
 
