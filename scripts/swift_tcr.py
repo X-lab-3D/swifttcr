@@ -54,6 +54,10 @@ if __name__ == "__main__":
     # checks if the output directory exists, if not it creates it
     if not os.path.exists(os.path.realpath(output_path)):
         os.mkdir(os.path.realpath(output_path))
+        
+    if not os.path.exists(os.path.realpath("tools/piper")):
+        print("SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC. If Piper was already obtained please put Piper in the tools folder, the path should look like this tools/piper. and should be named piper")
+        sys.exit(1)
     
     # make sure the paths are absolute and creates the variables
     receptor_path = os.path.realpath(args.pmhc)
