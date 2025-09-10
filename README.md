@@ -18,6 +18,11 @@ To get started with SwiftTCR, follow these steps:
 1. **Clone or Download** this repository.
 2. Navigate into the SwiftTCR folder.
 
+### Piper
+
+SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC.
+Once obtained put Piper in the tools folder, the path should look like this tools/piper.
+
 ### Installation
 
 To quickly install all the necessary packages, you can use the provided `swifttcr_install.yml` file. Run the following commands:
