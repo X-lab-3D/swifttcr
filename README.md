@@ -130,3 +130,10 @@ We are currently experimenting with support for pMHC Class II modeling. While th
 -mhc2
 ```
 This flag indicates that the program should model MHC Class II. The modeling process will use a reference MHC Class II structure, and a set of rotation matrices adjusted for MHC Class II complexes.
+
+----
+
+## Useful links
+
+* Pandora : https://github.com/X-lab-3D/PANDORA
+* TCRmodel2: https://github.com/piercelab/tcrmodel2
