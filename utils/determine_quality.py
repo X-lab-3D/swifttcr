@@ -10,6 +10,12 @@ Example usage:
 python determine_quality.py /path/to/sampling_results.tsv /path/to/output_file.tsv
 """
 
+"""
+Example input file format (sampling_results.tsv):
+1ao7	(8.430053, 2.480548, 0.571429)	(14.662288, 3.437532, 0.385714)	(10.103073, 2.66522, 0.5)
+1mi5	(28.651167, 5.875216, 0.068493)	(28.680507, 6.290566, 0.082192)	(10.5328, 3.824495, 0.150685)
+"""
+
 from sys import argv
 
 def parse_sampling_results(sampling_file):

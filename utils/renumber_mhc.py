@@ -11,6 +11,14 @@ Example usage:
 python renumber_mhc.py /path/to/mobile_pdb /path/to/reference_pmhc /path/to/output_pdb
 """
 
+"""
+file format mobile_pdb and reference_pmhc (PDB files):
+ATOM      1  N   GLU A   1      -8.669   0.877   1.279  1.00 22.53           N  
+ATOM      2  CA  GLU A   1      -7.784  -0.068   0.537  1.00 24.23           C  
+ATOM      3  C   GLU A   1      -6.318   0.082   0.909  1.00 24.88           C  
+ATOM      4  O   GLU A   1      -5.859   1.158   1.325  1.00 22.04           O  
+"""
+
 from typing import Dict, List
 import sys
 import os

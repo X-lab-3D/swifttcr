@@ -10,6 +10,14 @@ Author: Yannick Aarts
 Example usage:
 python3 plot_benchmark_success_rates.py lrmsd.txt irmsd.txt fnat.txt success_plot success_rate_plot
 """
+
+"""
+file format lrmsd.txt, irmsd.txt, fnat.txt:
+1ao7	0.571429	0.385714	0.5
+1mi5	0.068493	0.082192	0.150685
+1mwa	0.5625	0.453125	0.578125
+"""
+
 from sys import argv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -87,13 +95,15 @@ def parse_results(datapath):
         A dictionary where the keys are model names and the values are lists of lrmsd values.
     """
     data_dict = {}
-    f = open(datapath)
-    lines = f.readlines()
-    for line in lines:
-        splits = line.split()
-        model_name = splits[0].strip()
-        lrmsd_values = [float(i) for i in splits[1:]]
-        data_dict[model_name] = lrmsd_values
+    with open(datapath) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):  # Skip empty lines and comments
+                continue
+            splits = line.split()
+            model_name = splits[0].strip()
+            lrmsd_values = [float(i) for i in splits[1:]]
+            data_dict[model_name] = lrmsd_values
     return data_dict
 
 def calc_max_values(indices, data):

@@ -9,6 +9,13 @@ Example usage:
 python sort_melqui_file_different.py /path/to/tsv_directory /path/to/new_melqui_plot_combined /path/to/output_file column_name
 """
 
+"""
+file format tsv files (which are in the tsv_directory):
+1ao7	0.571429	0.385714	0.5
+1mi5	0.068493	0.082192	0.150685
+1mwa	0.5625	0.453125	0.578125
+"""
+
 import pandas as pd
 import os
 import sys

@@ -10,6 +10,13 @@ Example usage:
 python calculate_rmsd_all.py /path/to/pipeline_dir /path/to/reference_dir /path/to/output_base 4
 """
 
+"""
+Input file format pipeline_dir and reference_dir:
+ATOM      1  N   LEU A   1      -8.923   0.716   1.317  1.00 18.22           N  
+ATOM      2  CA  LEU A   1      -8.343   0.372  -0.009  1.00 18.72           C  
+ATOM      3  C   LEU A   1      -6.837   0.420   0.033  1.00 17.83           C  
+"""
+
 from pathlib import Path
 import sys
 import multiprocessing as mp

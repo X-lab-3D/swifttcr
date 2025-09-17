@@ -10,6 +10,20 @@ Example usage:
 python3 get_top_ranked_structures.py /path/to/clustering_file /path/to/input_directory /path/to/output_directory 4
 """
 
+"""
+Input file format clustering.txt:
+Cluster center: merged_53.pdb with 132 neighbors.
+Cluster center: merged_202.pdb with 109 neighbors.
+Cluster center: merged_95.pdb with 98 neighbors.
+"""
+
+"""
+Input file format input_directory (PDB files):
+ATOM      1  N   LEU A   1      -8.923   0.716   1.317  1.00 18.22           N  
+ATOM      2  CA  LEU A   1      -8.343   0.372  -0.009  1.00 18.72           C  
+ATOM      3  C   LEU A   1      -6.837   0.420   0.033  1.00 17.83           C  
+"""
+
 import os
 import sys
 import uuid

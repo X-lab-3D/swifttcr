@@ -9,6 +9,14 @@ Author: Nils Smit, Yannick Aarts
 Example usage: python make_melqui_benchmark.py data.tsv output
 """
 
+"""
+data.tsv format:
+1ao7	1mi5	1mwa	1oga
+rank_1	acceptable	incorrect	acceptable	acceptable
+rank_2	acceptable	incorrect	medium	incorrect
+rank_3	acceptable	acceptable	medium	acceptable
+"""
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib
@@ -51,7 +59,7 @@ def read_tsv_file(tsv_file):
     Returns:
         pd.DataFrame: DataFrame containing the data from the TSV file
     """
-    return pd.read_csv(tsv_file, sep='\t', index_col=0)
+    return pd.read_csv(tsv_file, sep='\t', index_col=0, comment='#')
 
 def create_melqui_plot(tsv_file, outfilename):
     """Create a melquiplot based on the input TSV file.
