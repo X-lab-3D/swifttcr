@@ -43,7 +43,7 @@ python3 scripts/swift_tcr.py -r /your/input/peptide-mhc -l /your/input/tcr -o ou
 
 **Example command:**
 ```bash
-python3 scripts/swift_tcr.py -r example/input/benchmark_dataset/3w0w/3w0w_pmhc_renumbered.pdb -l example/input/benchmark_dataset/3w0w/3w0w_tcr.pdb -o example/output/ -op first_test -c 6 -t 3 -m 100
+python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0w_pmhc_renumbered.pdb -l example/input/pmhc_1/unbound_structures/3w0w/3w0w_tcr.pdb -o example/output/ -op first_test -c 6 -t 3 -m 100
 ```
 
 ## Dependencies:

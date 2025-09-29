@@ -72,7 +72,15 @@ def main():
 
 
 def run_command(command):
-    """Runs a shell command and handles errors."""
+    """
+    Runs a shell command and handles errors.
+    
+    Args:
+        command (str): The shell command to run.
+    
+    Returns:
+        str: The standard output from the command.
+    """
     import subprocess
     try:
         result = subprocess.run(command, shell=True, stdout=subprocess.PIPE,
@@ -85,7 +93,13 @@ def run_command(command):
 
 
 def process_pdb(input_file: Path, output_file: Path):
-    """Processes a PDB file and writes the final merged output to output_file."""
+    """
+    Makes sure that the reference pdb file and target pdb have the same modifications done to them so that they can be properly aligned by dockq.
+    
+    args:
+        input_file (Path): Path to the input PDB file.
+        output_file (Path): Path to the output PDB file.
+    """
     receptor_name = Path("pMHC.pdb")
 
     with NamedTemporaryFile(delete=False) as temp_D, \
