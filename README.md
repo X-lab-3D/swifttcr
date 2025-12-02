@@ -125,14 +125,7 @@ This file is the output that contains the top ranked models and how many neigbou
 ## Experimental features
 
 ### pMHC Class II Support
-We are currently experimenting with support for pMHC Class II modeling. While this feature is not fully refined yet, users can try it by including the following command in their input:
-
-```bash
--mhc2
-```
-This flag indicates that the program should model MHC Class II. The modeling process will use a reference MHC Class II structure, and a set of rotation matrices adjusted for MHC Class II complexes.
-
-----
+Currently, SwiftTCR only support pMHC-I complexes but we are currently experimenting with pMHC-II implementation. Star the project to follow for updates. 
 
 ## Useful links
 
