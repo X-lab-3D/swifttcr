@@ -6,8 +6,7 @@
 Link to the paper: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
 
 ## Features
-- Predict binding interactions between TCRs and peptide-MHC.
-- User-friendly command-line interface.
+- Fast and optimized rigid-body docking of TCR-pMHC complexes
 - Efficient clustering algorithms for data analysis.
 - With 12 CPU cores it takes around 200 seconds.
 
@@ -27,14 +26,19 @@ cd swifttcr
 ### Piper
 
 SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC. <br/>
-Once obtained put Piper in the tools folder, the path should look like this tools/piper.<br>
+You should receive a file called "piper_package.tar.bz2".
+
+Unzip the file with:
+```
+tar -xjf piper_package.tar.bz2
+```
 
 ```
 # Move piper
-mv piper tools/piper
+mv piper_package/piper tools/piper
 ```
 
-Note: The piper folder should be named ```piper``` so that swifttcr can find the tool
+Note: This command renames the piper folder to ```piper``` so that swifttcr can find the tool
 
 ### Installation
 
