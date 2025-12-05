@@ -6,9 +6,9 @@
 Link to the paper: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
 
 ## Features
-- Fast and optimized rigid-body docking of TCR-pMHC complexes
-- Efficient clustering algorithms for data analysis.
-- With 12 CPU cores it takes around 200 seconds.
+- Optimized rigid-body docking of TCR-pMHC complexes
+- Fast docking (~200 seconds on 12 CPU cores)
+- Efficient clustering algorithms for data analysis
 
 ## Getting Started
 
