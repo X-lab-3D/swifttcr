@@ -234,7 +234,7 @@ This process standardizes the TCR residue numbering according to IMGT numbering 
 The same as the pmhc_pnon.ms but for tcr structure all the CDR loops are marked as attractive residues.
 
 #### renumbered_tcr_pnon.pdb
-Tenumbered TCR structure aligned to the reference TCR structure.
+The renumbered TCR structure aligned to the reference TCR structure.
 In addition to the ANARCI renumbering, chain IDs have been modified to match the naming convention of the reference complex.
 
 ----
