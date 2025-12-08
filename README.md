@@ -5,7 +5,7 @@
 
 Manuscript link: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
 
-![SwiftTCR](https://github.com/X-lab-3D/swifttcr/blob/main/flowchart.pdf?raw=true)
+![SwiftTCR](flowchart.png)
 
 ## Features
 - Optimized rigid-body docking of TCR-pMHC complexes
