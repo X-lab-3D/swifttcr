@@ -6,46 +6,72 @@
 Link to the paper: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
 
 ## Features
-- Predict binding interactions between TCRs and peptide-MHC.
-- Efficient clustering algorithms for data analysis.
-- With 12 CPU cores it takes around 200 seconds.
+- Optimized rigid-body docking of TCR-pMHC complexes
+- Fast docking (~200 seconds on 12 CPU cores)
+- Efficient clustering algorithms for data analysis
 
 ## Getting Started
 
 To get started with SwiftTCR, follow these steps:
 
-1. **Clone or Download** this repository.
-2. Navigate into the SwiftTCR folder.
+1. **Clone** this repository and navigate to it.
+```
+# Clone the repository
+git clone git@github.com:X-lab-3D/swifttcr.git
+
+# Move into the repository
+cd swifttcr
+```
 
 ### Piper
 
 SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC. <br/>
-Once obtained put Piper in the tools folder, the path should look like this tools/piper.<br>
-The piper folder should be named ```piper``` so that swifttcr can find the tool
+You should receive a file called "piper_package.tar.bz2".
+
+Unzip the file with:
+```
+tar -xjf piper_package.tar.bz2
+```
+
+```
+# Move piper
+mv piper_package/piper tools/piper
+```
+
+Note: This command renames the piper folder to ```piper``` so that swifttcr can find the tool
 
 ### Installation
 
-To quickly install all the necessary packages, you can use the provided `swifttcr_install.yml` file. Run the following commands:
+To quickly install all the necessary packages in a conda environment, you can use:
 
 ```
+# Create the environment
 conda env create -f swifttcr_install.yml
+
+# Activate the environment
 conda activate swifttcr 
 ```
 
 ### Running SwiftTCR
-Use the following command to execute SwiftTCR:
+Done! You can now run SwiftTCR by running :
 
 ```bash
-python3 scripts/swift_tcr.py -r /your/input/peptide-mhc -l /your/input/tcr -o output_directory -op output_prefix -c number_of_cores -t clustering_threshold (default=3) -m amount_of_models_generated
+python3 scripts/swift_tcr.py -r </your/input/peptide-mhc> -l </your/input/tcr> -o <output_directory> -op <output_prefix> -c <number_of_cores> -t <clustering_threshold (default=3)> -m <amount_of_models_to_generate>
 ```
-<br />
 
 **Example command:**
 ```bash
 python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0w_pmhc_renumbered.pdb -l example/input/pmhc_1/unbound_structures/3w0w/3w0w_tcr.pdb -o example/output/ -op first_test -c 6 -t 3 -m 100
 ```
 
+**Help**
+You can get the arguments description by running:
+```bash
+python3 scripts/swift_tcr.py -h
+```
+
 ## Dependencies:
+* Conda 24.5.0
 * Python 3.9.12
 * [Pymol open source: 3.0.0](https://github.com/schrodinger/pymol-open-source)
 * [anarci: 2021.02.04](https://github.com/oxpig/ANARCI) 
@@ -207,10 +233,7 @@ In addition to the ANARCI renumbering, chain IDs have been modified to match the
 ## Experimental features
 
 ### pMHC Class II Support
-
-We are currently working on supporting supporting MHC-II at this stage it is not supported.
-
-----
+Currently, SwiftTCR only support pMHC-I complexes but we are currently experimenting with pMHC-II implementation. Star the project to follow for updates. 
 
 ## Useful links
 
