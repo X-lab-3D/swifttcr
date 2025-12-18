@@ -43,6 +43,7 @@ if __name__ == "__main__":
         reference_ligand = os.path.realpath("ref/pmhc_1/2bnr_r_u.pdb")
         reference_receptor = os.path.realpath("ref/pmhc_1/2bnr_l_u.pdb")
         rotations = os.path.realpath("rotations_and_restraints/pmhc_1/filtered_cr_in_60.prm")
+        coefficient = os.path.realpath("coefficient/swifttcr_coefficient.prm")
     
     restraint_path =  os.path.realpath("rotations_and_restraints/restraintsDE.json")
     amount_of_models = args.models
@@ -140,7 +141,7 @@ if __name__ == "__main__":
         "--maskr=1.0",
         "-T", "FFTW_EXHAUSTIVE",
         "-p", piper_path + "/atoms04.prm",
-        "-f", piper_path + "/coeffs04.prm",
+        "-f", coefficient,
         "-r", rotations,
         os.path.join(output_path, receptor_ms),
         os.path.join(output_path, ligand_ms)
@@ -214,3 +215,38 @@ if __name__ == "__main__":
     end_time_all = time.time()
     
     print(f"Total time taken: {end_time_all - start_time_all} seconds")
+
+    rotated_dir = os.path.join(output_path, "rotated")
+    if os.path.exists(rotated_dir):
+        shutil.rmtree(rotated_dir)
+        print("Removed the 'rotated' directory")
+
+    print(f"Total time taken: {end_time_all - start_time_all} seconds")
+    
+    if args.cleanup:
+        print("Cleaning up intermediate files...")
+
+        KEEP_FILES = {"clustering.txt", "ft.000.00"}
+        KEEP_DIRS = {"merged"}
+
+        for item in os.listdir(output_path):
+            item_path = os.path.join(output_path, item)
+
+            # Keep selected files
+            if os.path.isfile(item_path) and item in KEEP_FILES:
+                continue
+
+            # Keep selected directories
+            if os.path.isdir(item_path) and item in KEEP_DIRS:
+                continue
+
+            # Remove everything else
+            try:
+                if os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                    print(f"Removed directory: {item}")
+                else:
+                    os.remove(item_path)
+                    print(f"Removed file: {item}")
+            except OSError as e:
+                print(f"Could not remove {item}: {e}")

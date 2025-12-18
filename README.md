@@ -1,7 +1,7 @@
-# SwiftTCR: Efficient computational docking protocol of TCRpMHC-I complexes using restricted rotation matrices
+# SwiftTCR: Efficient computational docking protocol of TCRpMHC class I complexes using restricted rotation matrices
 
 ## Overview
-**SwiftTCR** is a fast fourier transform based rigid-body docking tool designed to predict bindings between T-cell receptors (TCR) and peptide-MHC complexes.
+**SwiftTCR** is a fast fourier transform based rigid-body docking tool to predict docking orientations between T-cell receptors (TCR) and peptide-MHC class I complexes.
 
 Link to the paper: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
 
@@ -22,6 +22,12 @@ To get started with SwiftTCR, follow these steps:
 SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC. <br/>
 Once obtained put Piper in the tools folder, the path should look like this tools/piper.<br>
 The piper folder should be named ```piper``` so that swifttcr can find the tool
+
+The folder structure should look as follows:
+
+```
+tools/piper/<your piper executable>
+```
 
 ### Installation
 
@@ -58,6 +64,9 @@ python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0
 * [Matplotlib: 3.9.2](https://matplotlib.org/)
 * [Plotly: 5.24.1](https://plotly.com/)
 
+## Reference structures
+The reference structure that was used was 2bnr.
+
 ## Output SwiftTCR
 
 ### Output Structure Naming Convention initial placement
@@ -78,7 +87,7 @@ python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0
 - **D** = The Alpha and Beta chains of TCR combined
 
 ### Structure of output folder
-The output is a folder, named using the specified output prefix, created within the designated output directory. This folder contains the following files and subfolders:
+The output is generated as a folder within the specified output directory, named according to the chosen output prefix. This folder contains the files and subdirectories listed below. For this example, the input files used were `pmhc.pdb` and `tcr.pdb`.
 ```
 output
     └── example_output_folder
