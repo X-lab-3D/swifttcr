@@ -65,7 +65,7 @@ python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0
 * [Plotly: 5.24.1](https://plotly.com/)
 
 ## Reference structures
-The reference structure that was used was 2bnr.
+The reference structure used in this study was the TCR complex 2BNR. This structure was selected because it represents a complete T-cell receptor, which improves the robustness and reliability of alignments involving incomplete or partial structures.
 
 ## Output SwiftTCR
 
