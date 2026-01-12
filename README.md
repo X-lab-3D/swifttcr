@@ -3,25 +3,48 @@
 ## Overview
 **SwiftTCR** is a fast fourier transform based rigid-body docking tool to predict docking orientations between T-cell receptors (TCR) and peptide-MHC class I complexes.
 
-Link to the paper: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
+Manuscript link: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
+
+![SwiftTCR](Flowchart.png)
 
 ## Features
-- Predict binding interactions between TCRs and peptide-MHC.
-- Efficient clustering algorithms for data analysis.
-- With 12 CPU cores it takes around 200 seconds.
+- Optimized rigid-body docking of TCR-pMHC complexes
+- Fast docking (~200 seconds on 12 CPU cores)
+- Efficient clustering algorithms for data analysis
 
 ## Getting Started
 
 To get started with SwiftTCR, follow these steps:
 
-1. **Clone or Download** this repository.
-2. Navigate into the SwiftTCR folder.
+1. **Clone** this repository and navigate to it.
+```
+# Clone the repository
+git clone git@github.com:X-lab-3D/swifttcr.git
+
+# Move into the repository
+cd swifttcr
+```
 
 ### Piper
 
-SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC. <br/>
-Once obtained put Piper in the tools folder, the path should look like this tools/piper.<br>
-The piper folder should be named ```piper``` so that swifttcr can find the tool
+SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). When contacting them, **make sure you request version v0.0.4**.
+For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC. <br/>
+You should receive a file called "piper_package.tar.bz2".
+
+Unzip the file with:
+```
+tar -xvf piper_package.tar.bz2
+```
+
+```
+#Make the piper folder
+mkdir tools/piper
+
+# Move piper
+mv piper_package/* tools/piper/
+```
+
+In the end, you should have a tools/piper folder with all the piper components, inclusing the ```piper``` executable, inside your swifttcr folder.
 
 The folder structure should look as follows:
 
@@ -31,27 +54,39 @@ tools/piper/<your piper executable>
 
 ### Installation
 
-To quickly install all the necessary packages, you can use the provided `swifttcr_install.yml` file. Run the following commands:
+#### Requirements:
+* Conda >= 23.10.0
+
+To quickly install all the necessary packages in a conda environment, you can use:
 
 ```
+# Create the environment
 conda env create -f swifttcr_install.yml
+
+# Activate the environment
 conda activate swifttcr 
 ```
 
 ### Running SwiftTCR
-Use the following command to execute SwiftTCR:
+Done! You can now run SwiftTCR by running :
 
 ```bash
-python3 scripts/swift_tcr.py -r /your/input/peptide-mhc -l /your/input/tcr -o output_directory -op output_prefix -c number_of_cores -t clustering_threshold (default=3) -m amount_of_models_generated
+python3 scripts/swift_tcr.py -r </your/input/peptide-mhc> -l </your/input/tcr> -o <output_directory> -op <output_prefix> -c <number_of_cores> -t <clustering_threshold (default=3)> -m <amount_of_models_to_generate>
 ```
-<br />
 
 **Example command:**
 ```bash
 python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0w_pmhc_renumbered.pdb -l example/input/pmhc_1/unbound_structures/3w0w/3w0w_tcr.pdb -o example/output/ -op first_test -c 6 -t 3 -m 100
 ```
 
+**Help**
+You can get the arguments description by running:
+```bash
+python3 scripts/swift_tcr.py -h
+```
+
 ## Dependencies:
+All dependencies are installed by conda through the swifttcr_install.yml file. We report them here just for clarity:
 * Python 3.9.12
 * [Pymol open source: 3.0.0](https://github.com/schrodinger/pymol-open-source)
 * [anarci: 2021.02.04](https://github.com/oxpig/ANARCI) 
@@ -188,21 +223,21 @@ merged_0.pdb, merged_1.pdb, 0.7426182627677917
 ```
 
 This indicates that the interface RMSD between merged_0.pdb and merged_1.pdb is 0.74 Å.
-All iRMSD values are reported in angstroms (Å).
+All iRMSD values are calculated over the Carbon-alphas only and are reported in angstroms (Å).
 
 #### Merged folder
 A folder containing all predicted docked TCR–peptide–MHC structures generated during the modeling workflow.
 Each file inside (e.g., ```merged_0.pdb```, ```merged_1.pdb```, …) represents a single docking model with the TCR positioned relative to the peptide–MHC according to its predicted binding pose.
 
 #### renumbered_tcr.pdb
-A TCR structure that has been renumbered using ANARCI.
+TCR structure automatically renumbered to IMGT numbering using ANARCI.
 This process standardizes the TCR residue numbering according to IMGT numbering schemes, enabling consistent mapping of complementarity-determining regions (CDRs) and framework regions.
 
 #### renumbered_tcr_pnon.ms
 The same as the pmhc_pnon.ms but for tcr structure all the CDR loops are marked as attractive residues.
 
 #### renumbered_tcr_pnon.pdb
-A renumbered TCR structure aligned to the reference peptide–MHC structure.
+The renumbered TCR structure aligned to the reference TCR structure.
 In addition to the ANARCI renumbering, chain IDs have been modified to match the naming convention of the reference complex.
 
 ----
@@ -210,12 +245,14 @@ In addition to the ANARCI renumbering, chain IDs have been modified to match the
 ## Experimental features
 
 ### pMHC Class II Support
-
-We are currently working on supporting supporting MHC-II at this stage it is not supported.
-
-----
+Currently, SwiftTCR only support pMHC-I complexes but we are currently experimenting with pMHC-II implementation. Star the project to follow for updates. 
 
 ## Useful links
 
-* Pandora : https://github.com/X-lab-3D/PANDORA
-* TCRmodel2: https://github.com/piercelab/tcrmodel2
+Here you can find useful tools that we use to generate input structures for SwiftTCR or to speed up SwiftTCR.
+
+| Tool | Description | Link |
+| --- | --- | --- |
+| Pandora | Fast and accurate pMHC modelling| https://github.com/X-lab-3D/PANDORA |
+| TCRmodel2 | Accurate TCR modelling with AlphaFold2| https://github.com/piercelab/tcrmodel2 |
+| Gradpose | Ultra-fast large scale structures superposition | https://github.com/X-lab-3D/GradPose |
