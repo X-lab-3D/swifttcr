@@ -23,6 +23,7 @@ import multiprocessing as mp
 import gc
 import time
 import os
+import re
 from tempfile import NamedTemporaryFile
 from DockQ.DockQ import load_PDB, run_on_all_native_interfaces
 
@@ -233,6 +234,7 @@ def write_all_results_to_files(fnat_dict, lrmsd_dict, irmsd_dict, outfile_base):
     print(f"Results written to {fnat_outfile}, {lrmsd_outfile}, {irmsd_outfile}, and {combined_outfile}.")
 
 
+
 def create_model_dict(pipeline_dir):
     """Traverse the directory to gather all decoy files for each reference model.
     
@@ -247,15 +249,17 @@ def create_model_dict(pipeline_dir):
 
     for model_dir in pipeline.iterdir():
         if model_dir.is_dir():
-            model_identifier = model_dir.name[:4]
+            pdb_id = model_dir.name[:4]
+            model_identifier = model_dir.name
             decoy_dir = Path(model_dir, "merged")
 
             if decoy_dir.exists():
-                decoys = list(decoy_dir.glob("*.pdb"))  # Collect all PDB files in the "merged" directory
-                model_dict[model_identifier] = decoys
-
+                files = sorted(decoy_dir.glob("*.pdb"),key=lambda p: int(re.search(r"\d+", p.stem).group()))
+                model_dict[model_identifier] = {
+                    "pdb_id": pdb_id,
+                    "decoys": files
+                }
     return model_dict
-
 
 def map_and_run_dockq(args):
     """Map residues and run DockQ on the reference and decoy PDBs.
