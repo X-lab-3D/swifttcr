@@ -20,14 +20,14 @@ def read_irmsd_values(file_path: str) -> List[Tuple[str, str, float]]:
             irmsd_values.append((row[0], row[1], float(row[2])))
     return irmsd_values
 
-def read_total_irmsd(energy_file: str) -> dict:
-    """Read total irmsd per model."""
-    total_dict = {}
+def read_energy_values(energy_file: str) -> dict:
+    """Read energy value per model."""
+    energy_dict = {}
     with open(energy_file, "r") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            total_dict[row["merged_id"]] = float(row["total_irmsd"])
-    return total_dict
+            energy_dict[row["merged_id"]] = float(row["total_irmsd"])
+    return energy_dict
 
 def create_neighbor_dict(irmsd_values):
     """Create symmetric neighbor dictionary."""
@@ -40,9 +40,9 @@ def create_neighbor_dict(irmsd_values):
     return neighbors
 
 
-def rank_based_scoring(neighbor_dict, total_irmsd_dict):
+def energy_density_scoring(neighbor_dict, total_irmsd_dict):
     """
-    Compute rank-based score for each model.
+    Compute energy-density score for each model.
     """
     final_scores = {}
 
@@ -63,7 +63,7 @@ def rank_based_scoring(neighbor_dict, total_irmsd_dict):
     ranked = sorted(final_scores.items(), key=lambda x: x[1])
     return ranked
 
-def rank_based_main(
+def energy_calc_main(
     irmsd_file,
     energy_file,
     output_file=None,
@@ -72,7 +72,7 @@ def rank_based_main(
     neighbor_dict = create_neighbor_dict(irmsd_values)
     total_irmsd_dict = read_total_irmsd(energy_file)
 
-    ranked_models = rank_based_scoring(
+    ranked_models = energy_density_scoring(
         neighbor_dict,
         total_irmsd_dict
     )
