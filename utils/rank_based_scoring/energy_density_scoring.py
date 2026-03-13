@@ -10,7 +10,7 @@ def run_pipeline(base_path):
     Automated pipeline to process multiple docking clusters.
 
     This script automates the scoring process across multiple subdirectories. 
-    It performs the following logic for every folder (cluster) found in the base_path:
+    It performs the following logic for every folder found in the base_path:
     
     1. Detection: Scans for sub-folders containing 'irmsd.csv' and 'ft.000.00'.
     2. Model Mapping: Reads model names from the distance file to ensure consistency.
