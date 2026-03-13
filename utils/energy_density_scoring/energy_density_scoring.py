@@ -55,8 +55,8 @@ def run_pipeline(base_path):
             print(f"Skipping {cluster}: missing irmsd.csv or ft.000.00")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run the Rank-Based Scoring pipeline on a directory of clusters.")
-    parser.add_argument("path", help="Path to the directory containing cluster folders")
+    parser = argparse.ArgumentParser(description="Run the energy-density scoring pipeline on a directory.")
+    parser.add_argument("path", help="Path to the directory containing folders")
     
     args = parser.parse_args()
     run_pipeline(args.path)
