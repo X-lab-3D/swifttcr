@@ -26,7 +26,7 @@ def read_energy_values(energy_file: str) -> dict:
     with open(energy_file, "r") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            energy_dict[row["merged_id"]] = float(row["total_irmsd"])
+            energy_dict[row["merged_id"]] = float(row["energy"])
     return energy_dict
 
 def create_neighbor_dict(irmsd_values):
@@ -40,23 +40,23 @@ def create_neighbor_dict(irmsd_values):
     return neighbors
 
 
-def energy_density_scoring(neighbor_dict, total_irmsd_dict):
+def energy_density_scoring(neighbor_dict, energy_dict):
     """
     Compute energy-density score for each model.
     """
     final_scores = {}
 
     for model, neighbor_list in neighbor_dict.items():
-        if model not in total_irmsd_dict:
+        if model not in energy_dict:
             continue
 
-        score = total_irmsd_dict[model]
+        score = energy_dict[model]
 
         for neighbor_id, pair_irmsd in neighbor_list:
-            if neighbor_id not in total_irmsd_dict:
+            if neighbor_id not in energy_dict:
                 continue
             
-            score += total_irmsd_dict[neighbor_id] / (pair_irmsd + 1)
+            score += energy_dict[neighbor_id] / (pair_irmsd + 1)
 
         final_scores[model] = score
 
@@ -70,11 +70,11 @@ def energy_calc_main(
 ):
     irmsd_values = read_irmsd_values(irmsd_file)
     neighbor_dict = create_neighbor_dict(irmsd_values)
-    total_irmsd_dict = read_total_irmsd(energy_file)
+    energy_dict = read_energy_values(energy_file)
 
     ranked_models = energy_density_scoring(
         neighbor_dict,
-        total_irmsd_dict
+        energy_dict
     )
 
     # Output
