@@ -14,7 +14,7 @@ def generate_total_irmsd(ft_file_path, merged_models):
     # build CSV
     records = []
     for i, model in enumerate(merged_models):
-        records.append({"merged_id": model, "total_irmsd": energies[i]})
+        records.append({"merged_id": model, "energy": energies[i]})
 
     output_csv = os.path.join(os.path.dirname(ft_file_path), "merged_with_energy.csv")
     pd.DataFrame(records).to_csv(output_csv, index=False)
