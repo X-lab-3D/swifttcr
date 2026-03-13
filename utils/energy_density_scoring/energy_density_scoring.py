@@ -3,7 +3,7 @@ import pandas as pd
 import argparse
 # Import specific functions from local files
 from generate_total_irmsd import generate_total_irmsd
-from energy_density_calc import rank_based_main
+from energy_density_calc import energy_calc_main
 
 def run_pipeline(base_path):
     """
@@ -48,7 +48,7 @@ def run_pipeline(base_path):
             
             # Calculate rank-based scores
             output_rank = os.path.join(cluster_dir, "final_ranking.csv")
-            rank_based_main(irmsd_path, energy_csv, output_file=output_rank)
+            energy_calc_main(irmsd_path, energy_csv, output_file=output_rank)
             
             print(f"Success: {output_rank} created.\n")
         else:
