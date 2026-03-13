@@ -7,8 +7,6 @@ from energy_density_calc import energy_calc_main
 
 def run_pipeline(base_path):
     """
-    Automated pipeline to process multiple docking clusters.
-
     This script automates the scoring process across multiple subdirectories. 
     It performs the following logic for every folder found in the base_path:
     
@@ -47,12 +45,12 @@ def run_pipeline(base_path):
             energy_csv = generate_total_irmsd(ft_path, models)
             
             # Calculate rank-based scores
-            output_rank = os.path.join(cluster_dir, "final_ranking.csv")
+            output_rank = os.path.join(folder_path, "final_ranking.csv")
             energy_calc_main(irmsd_path, energy_csv, output_file=output_rank)
             
             print(f"Success: {output_rank} created.\n")
         else:
-            print(f"Skipping {cluster}: missing irmsd.csv or ft.000.00")
+            print(f"Skipping {folder}: missing irmsd.csv or ft.000.00")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the energy-density scoring pipeline on a directory.")
