@@ -39,7 +39,7 @@ Lower score = better rank.
 Run the pipeline on a directory containing multiple docking folders:
 
 ```bash
-python run_pipeline.py /path/to/data
+python energy_density_scoring.py /path/to/data
 ```
 
 Example structure:
