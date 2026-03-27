@@ -20,7 +20,7 @@ def run_pipeline(base_path):
     
     Usage:
     Run the script from the terminal by providing the path to your main data directory:
-    python script_name.py /path/to/your/data_folders
+    python energy_density_scoring.py /path/to/your/data_folders
     """
     if not os.path.exists(base_path):
         print(f"Error: The path {base_path} does not exist.")
