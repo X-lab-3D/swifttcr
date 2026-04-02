@@ -1,13 +1,16 @@
 """
 Name: calc_rmsd_cluster.py
-Function: Calculates the LRMSD, IRMSD and Fnat based on a reference and target structure. The RMSD is calculated by getting all the subdirectories in a given directory and getting from those subdirectories the merged directory which contains the files. The program know which reference to compare to because the reference should have the same name as the subdirectory only has the reference _renumberd added to it. The RMSD calculation is done by the tool DockQ.
+Function: Calculates the LRMSD, IRMSD and Fnat based on a reference and target structure. The RMSD is calculated by getting all the subdirectories in a given directory and 
+getting from those subdirectories the merged directory which contains the files. The program know which reference to compare to because the reference should have the same 
+name as the subdirectory only has the reference _renumberd added to it. The RMSD calculation is done by the tool DockQ. The script is usable for both MHC classes by 
+defining the corresponding class at the end of the commandline.
 Date: 25-11-2024
-Author: Nils Smit, Yannick Aarts, Farzaneh Meimandi Parizi
+Author: Nils Smit, Yannick Aarts, Farzaneh Meimandi Parizi, Wieke Krösschell
 """
 
 """
 Example usage:
-python calc_rmsd_cluster.py /path/to/pipeline_dir /path/to/reference_dir clustering.txt /path/to/output_base 4
+python calc_rmsd_cluster.py /path/to/pipeline_dir /path/to/reference_dir clustering.txt /path/to/output_base 4 1
 """
 
 """
@@ -41,6 +44,7 @@ def main():
     cluster_input = sys.argv[3]  # Name of the cluster file example: "clustering.txt"
     outfile_base = sys.argv[4]  # Output file path base (user-specified)
     num_threads = int(sys.argv[5])  # Number of threads (cores) to use
+    mhc_class = int(sys.argv[6]) # MHC class of the results
     batch_size = 15 # Size of each batch (can be adjusted)
 
     max_threads = max(1, num_threads)
@@ -59,7 +63,7 @@ def main():
             temp_ref_path = temp_ref.name
         
         # Process the reference into the temp file
-        process_pdb(raw_reference_path, temp_ref_path)
+        process_pdb(raw_reference_path, temp_ref_path, mhc_class)
 
 
         for decoy in decoys:
@@ -90,17 +94,34 @@ def process_pdb(input_file: Path, output_file: Path):
          NamedTemporaryFile(delete=False) as temp_ligand:
         
         try:
-            command_mhc = (
-                f"pdb_tidy {input_file} | "
-                f"pdb_selchain -A | pdb_chain -A | pdb_reres -1000 > mhc_chainA.pdb; "
-                f"pdb_tidy {input_file} | "
-                f"pdb_selchain -B | pdb_chain -B | pdb_reres -2000 > mhc_chainB.pdb; "
-                f"cat mhc_chainA.pdb mhc_chainB.pdb > mhc.pdb; "
-                f"pdb_tidy {input_file} | "
-                f"pdb_selchain -C | pdb_chain -A | pdb_reres -1 > pep.pdb; "
-                f"pdb_merge pep.pdb mhc.pdb | pdb_tidy > {receptor_name}; "
-                f"rm mhc_chainA.pdb mhc_chainB.pdb mhc.pdb pep.pdb"
-            )
+            if mhc_class == 1:
+                command_mhc = (
+                    f"pdb_tidy {input_file} | "
+                    f"pdb_selchain -A | pdb_chain -A | pdb_reres -1000 > mhc_chainA.pdb; "
+                    f"pdb_tidy {input_file} | "
+                    f"pdb_selchain -B | pdb_chain -B | pdb_reres -2000 > mhc_chainB.pdb; "
+                    f"cat mhc_chainA.pdb mhc_chainB.pdb > mhc.pdb; "
+                    f"pdb_tidy {input_file} | "
+                    f"pdb_selchain -C | pdb_chain -A | pdb_reres -1 > pep.pdb; "
+                    f"pdb_merge pep.pdb mhc.pdb | pdb_tidy > {receptor_name}; "
+                    f"rm mhc_chainA.pdb mhc_chainB.pdb mhc.pdb pep.pdb"
+                )
+            elif mhc_class == 2:
+                command_mhc = (
+                    f"pdb_tidy {input_file} | "
+                    f"pdb_selchain -A | pdb_chain -A | pdb_reres -1000 > mhc_chainA.pdb; "
+                    f"pdb_tidy {input_file} | "
+                    f"pdb_selchain -B | pdb_chain -A | pdb_reres -2000 > mhc_chainB.pdb; "
+                    f"cat mhc_chainA.pdb mhc_chainB.pdb > mhc.pdb; "
+                    f"pdb_tidy {input_file} | "
+                    f"pdb_selchain -C | pdb_chain -A | pdb_reres -1 > pep.pdb; "
+                    f"pdb_merge pep.pdb mhc.pdb | pdb_tidy > {receptor_name}; "
+                    f"rm mhc_chainA.pdb mhc_chainB.pdb mhc.pdb pep.pdb"
+                )
+
+            else: 
+                print(f"{mhc_class} is an incorrect class. It should be either 1 or 2.")
+                
             run_command(command_mhc)
 
             command_chainE = f"pdb_tidy {input_file} | pdb_selchain -E | pdb_shiftres -2000 | pdb_chain -D > {temp_E.name}"

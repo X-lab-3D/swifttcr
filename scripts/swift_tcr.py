@@ -38,7 +38,7 @@ if __name__ == "__main__":
     if args.mhc_class_2:
         reference_ligand = os.path.realpath("ref/pmhc_2/2iam_r_u.pdb") 
         reference_receptor = os.path.realpath("ref/pmhc_2/2iam_l_u.pdb")
-        rotations = os.path.realpath("/home/wkrosschell/2_data/rotation_matrices_mhc_2/reduced_sampling.prm")
+        rotations = os.path.realpath("/rotations_and_restraints/pmhc_2/reduced_sampling_broad_angles.prm")
     else:
         reference_ligand = os.path.realpath("ref/pmhc_1/2bnr_r_u.pdb")
         reference_receptor = os.path.realpath("ref/pmhc_1/2bnr_l_u.pdb")
