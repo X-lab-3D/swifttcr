@@ -1,52 +1,92 @@
-# SwiftTCR: Efficient computational docking protocol of TCRpMHC-I complexes using restricted rotation matrices
+# SwiftTCR: Efficient computational docking protocol of TCRpMHC class I complexes using restricted rotation matrices
 
 ## Overview
-**SwiftTCR** is a fast fourier transform based rigid-body docking tool designed to predict bindings between T-cell receptors (TCR) and peptide-MHC complexes.
+**SwiftTCR** is a fast fourier transform based rigid-body docking tool to predict docking orientations between T-cell receptors (TCR) and peptide-MHC class I complexes.
 
-Link to the paper: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
+Manuscript link: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
+
+![SwiftTCR](Flowchart.png)
 
 ## Features
-- Predict binding interactions between TCRs and peptide-MHC.
-- User-friendly command-line interface.
-- Efficient clustering algorithms for data analysis.
-- With 12 CPU cores it takes around 200 seconds.
+- Optimized rigid-body docking of TCR-pMHC complexes
+- Fast docking (~200 seconds on 12 CPU cores)
+- Efficient clustering algorithms for data analysis
 
 ## Getting Started
 
 To get started with SwiftTCR, follow these steps:
 
-1. **Clone or Download** this repository.
-2. Navigate into the SwiftTCR folder.
+1. **Clone** this repository and navigate to it.
+```
+# Clone the repository
+git clone git@github.com:X-lab-3D/swifttcr.git
+
+# Move into the repository
+cd swifttcr
+```
 
 ### Piper
 
-SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC. <br/>
-Once obtained put Piper in the tools folder, the path should look like this tools/piper.<br>
-The piper folder should be named ```piper``` so that swifttcr can find the tool
+SwiftTCR is built on Piper (v0.0.4). For academic use, Piper can be obtained by contacting Sandor Vajda's lab (vajda@bu.edu) or George Jones (george.jones@stonybrook.edu). When contacting them, **make sure you request version v0.0.4**.
+For industrial use, a license agreement must be obtained through Acpharis Inc. or Schrödinger LLC. <br/>
+You should receive a file called "piper_package.tar.bz2".
+
+Unzip the file with:
+```
+tar -xvf piper_package.tar.bz2
+```
+
+```
+#Make the piper folder
+mkdir tools/piper
+
+# Move piper
+mv piper_package/* tools/piper/
+```
+
+In the end, you should have a tools/piper folder with all the piper components, inclusing the ```piper``` executable, inside your swifttcr folder.
+
+The folder structure should look as follows:
+
+```
+tools/piper/<your piper executable>
+```
 
 ### Installation
 
-To quickly install all the necessary packages, you can use the provided `swifttcr_install.yml` file. Run the following commands:
+#### Requirements:
+* Conda >= 23.10.0
+
+To quickly install all the necessary packages in a conda environment, you can use:
 
 ```
+# Create the environment
 conda env create -f swifttcr_install.yml
+
+# Activate the environment
 conda activate swifttcr 
 ```
 
 ### Running SwiftTCR
-Use the following command to execute SwiftTCR:
+Done! You can now run SwiftTCR by running :
 
 ```bash
-python3 scripts/swift_tcr.py -r /your/input/peptide-mhc -l /your/input/tcr -o output_directory -op output_prefix -c number_of_cores -t clustering_threshold (default=3) -m amount_of_models_generated
+python3 scripts/swift_tcr.py -r </your/input/peptide-mhc> -l </your/input/tcr> -o <output_directory> -op <output_prefix> -c <number_of_cores> -t <clustering_threshold (default=3)> -m <amount_of_models_to_generate>
 ```
-<br />
 
 **Example command:**
 ```bash
 python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0w_pmhc_renumbered.pdb -l example/input/pmhc_1/unbound_structures/3w0w/3w0w_tcr.pdb -o example/output/ -op first_test -c 6 -t 3 -m 100
 ```
 
+**Help**
+You can get the arguments description by running:
+```bash
+python3 scripts/swift_tcr.py -h
+```
+
 ## Dependencies:
+All dependencies are installed by conda through the swifttcr_install.yml file. We report them here just for clarity:
 * Python 3.9.12
 * [Pymol open source: 3.0.0](https://github.com/schrodinger/pymol-open-source)
 * [anarci: 2021.02.04](https://github.com/oxpig/ANARCI) 
@@ -58,6 +98,9 @@ python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0
 * [PDB2PQR: 3.6.1](https://github.com/Electrostatics/pdb2pqr)
 * [Matplotlib: 3.9.2](https://matplotlib.org/)
 * [Plotly: 5.24.1](https://plotly.com/)
+
+## Reference structures
+The reference structure used in this study was the TCR complex 2BNR. This structure was selected because it represents a complete T-cell receptor, which improves the robustness and reliability of alignments involving incomplete or partial structures.
 
 ## Output SwiftTCR
 
@@ -79,62 +122,137 @@ python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0
 - **D** = The Alpha and Beta chains of TCR combined
 
 ### Structure of output folder
-The output is a folder, named using the specified output prefix, created within the designated output directory. This folder contains the following files and subfolders:
+The output is generated as a folder within the specified output directory, named according to the chosen output prefix. This folder contains the files and subdirectories listed below. For this example, the input files used were `pmhc.pdb` and `tcr.pdb`.
 ```
 output
-    └── 3w0w
-        ├── 3w0w
-        ├── 3w0w_pmhc_renumbered_pnon.ms
-        ├── 3w0w_pmhc_renumbered_pnon.pdb
-        ├── 3w0w_pmhc_renumbered_pnon_rename.pdb
+    └── example_output_folder
+        ├── pmhc_pnon.ms
+        ├── pmhc_pnon.pdb
+        ├── pmhc_pnon_rename.pdb
         ├── clustering.txt
         ├── ft.000.00
         ├── irmsd.csv
         ├── merged
         │   └── merged_0.pdb
-        ├── renumbered_3w0w_tcr.pdb
-        ├── renumbered_3w0w_tcr_pnon.ms
-        ├── renumbered_3w0w_tcr_pnon.pdb
-        └── rotated
-            └── 3w0w.0.pdb
+        ├── renumbered_tcr.pdb
+        ├── renumbered_tcr_pnon.ms
+        └── renumbered_tcr_pnon.pdb
 ```
 
-#### Merged folder
-A Folder that contains the predicted structures of the TCR-peptide-MHC.
+#### pmhc_pnon.ms
+A prepared peptide–MHC structure in .ms format.
+This file includes the definition of attractive residues in column 10 (0.0 or 1.0), which are used by the docking engine to bias or constrain interactions.
+In this file all peptide residues are selected for attraction (1).
 
-#### Rotated folder
-A folder that contains the rotated structures that where made with the use of the PIPER energies.
+#### pmhc_pnon.pdb
+A pdb2pqr-prepared peptide–MHC structure generated by prepare.py.
+The script performs several cleanup and normalization steps:
 
-#### irmsd.csv
-A .csv file that contains the iRMSD between all the merged files.
+Backbone integrity filtering
 
-#### ft. files
-These files contain the energies calculated by PIPER and are sorted on lowest energies first.
+Residues missing backbone atoms (N, CA, C) are removed.
 
-#### pnon.pdb files
-Input structures that have been prepared and been aligned to a reference structure. They also have the same chainIDs as the reference structures.
+pdb2pqr processing
 
-#### .ms files
-These files have added attractions that is used to run PIPER.
+The structure is passed through pdb2pqr (CHARMM force field) to
+
+- add missing atoms
+
+- assign charges and radii
+
+- standardize atom naming and geometry
+
+- CHARMM-specific atom fixes
+
+- ILE CD1 → CD conversion
+
+- Residues normalized to a complete CHARMM-compatible atom set
+
+#### pmhc_pnon_rename.pdb
+A version of the pMHC PDB where:
+
+All chains have been renamed to chain A
+
+Residue numbers have been offset by +1000 per chain to encode chain origin in the numbering.
+
+Chain A → residues 1–999
+
+Chain B → residues 1000–1999
+
+Chain C → residues 2000–2999
+
 
 #### clustering.txt
-This file is the output that contains the top ranked models and how many neigbours that where found with near the model.
+
+This file contains the clustering results of all generated TCR–pMHC docking models.
+Each line reports a cluster center (a representative model) along with the number of neighboring models assigned to that cluster.
+
+Example entry:
+```
+Cluster center: merged_23.pdb with 123 neighbors.
+```
+
+This means that merged_23.pdb is the representative structure for a cluster containing 123 models that are structurally similar according to the clustering metric (typically RMSD or interface RMSD).
+
+The final line of the file reports the total number of clusters identified.
+
+#### ft.000.00
+Raw PIPER docking output corresponding to coefficient set 00.
+This file contains the scored Fourier–transform–based docking solutions generated by PIPER.
+
+For details on coefficient indexing and output structure, see for example:
+
+```
+tools/piper/piper --help
+```
+
+#### irmsd.csv
+A comma-separated file containing the pairwise interface RMSD (iRMSD) between all generated merged models.
+Every model is compared against every other model, producing a matrix in long-table form.
+
+Each row follows the format:
+
+```
+model_A, model_B, iRMSD_value
+```
+
+Example:
+
+```
+merged_0.pdb, merged_1.pdb, 0.7426182627677917
+```
+
+This indicates that the interface RMSD between merged_0.pdb and merged_1.pdb is 0.74 Å.
+All iRMSD values are calculated over the Carbon-alphas only and are reported in angstroms (Å).
+
+#### Merged folder
+A folder containing all predicted docked TCR–peptide–MHC structures generated during the modeling workflow.
+Each file inside (e.g., ```merged_0.pdb```, ```merged_1.pdb```, …) represents a single docking model with the TCR positioned relative to the peptide–MHC according to its predicted binding pose.
+
+#### renumbered_tcr.pdb
+TCR structure automatically renumbered to IMGT numbering using ANARCI.
+This process standardizes the TCR residue numbering according to IMGT numbering schemes, enabling consistent mapping of complementarity-determining regions (CDRs) and framework regions.
+
+#### renumbered_tcr_pnon.ms
+The same as the pmhc_pnon.ms but for tcr structure all the CDR loops are marked as attractive residues.
+
+#### renumbered_tcr_pnon.pdb
+The renumbered TCR structure aligned to the reference TCR structure.
+In addition to the ANARCI renumbering, chain IDs have been modified to match the naming convention of the reference complex.
 
 ----
 
 ## Experimental features
 
 ### pMHC Class II Support
-We are currently experimenting with support for pMHC Class II modeling. While this feature is not fully refined yet, users can try it by including the following command in their input:
-
-```bash
--mhc2
-```
-This flag indicates that the program should model MHC Class II. The modeling process will use a reference MHC Class II structure, and a set of rotation matrices adjusted for MHC Class II complexes.
-
-----
+Currently, SwiftTCR only support pMHC-I complexes but we are currently experimenting with pMHC-II implementation. Star the project to follow for updates. 
 
 ## Useful links
 
-* Pandora : https://github.com/X-lab-3D/PANDORA
-* TCRmodel2: https://github.com/piercelab/tcrmodel2
+Here you can find useful tools that we use to generate input structures for SwiftTCR or to speed up SwiftTCR.
+
+| Tool | Description | Link |
+| --- | --- | --- |
+| Pandora | Fast and accurate pMHC modelling| https://github.com/X-lab-3D/PANDORA |
+| TCRmodel2 | Accurate TCR modelling with AlphaFold2| https://github.com/piercelab/tcrmodel2 |
+| Gradpose | Ultra-fast large scale structures superposition | https://github.com/X-lab-3D/GradPose |

@@ -5,6 +5,7 @@ import os.path
 import sys
 import os
 import random
+import random
 
 def add_missing_chain(file, out_file):
     with open(out_file, 'w') as out_f, open(file) as f:
@@ -185,6 +186,7 @@ def pdbpqr(base_dir, pdb, chains):
     rand = random.randint(0, 10000000)
 
     # Running the PDB2PQR process
+    with open(f"error_log_{rand}", 'a') as err_out, open(f"output_log_{rand}", 'a') as out_f:
     with open(f"error_log_{rand}", 'a') as err_out, open(f"output_log_{rand}", 'a') as out_f:
         subprocess.call(pdb2pqr_command, stdout=out_f, stderr=err_out)
 
