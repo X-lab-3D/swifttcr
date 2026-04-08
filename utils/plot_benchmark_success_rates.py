@@ -8,7 +8,7 @@ Author: Yannick Aarts
 
 """
 Example usage:
-python3 plot_benchmark_success_rates.py lrmsd.txt irmsd.txt fnat.txt success_plot success_rate_plot base_name(= title of plot)
+python3 plot_benchmark_success_rates.py lrmsd.txt irmsd.txt fnat.txt success_plot success_rate_plot
 """
 
 """
@@ -17,8 +17,6 @@ file format lrmsd.txt, irmsd.txt, fnat.txt:
 1mi5	0.068493	0.082192	0.150685
 1mwa	0.5625	0.453125	0.578125
 """
-
-# Don't forget to change the right pdb_structures.
 
 from sys import argv
 import numpy as np
@@ -64,7 +62,7 @@ def main():
     labels = [1,5,10,20,50,100]
 
     color_matrix_all = eval_model_qualities(lrmsd_dict, labels,  irmsd_dict, fnat_dict, rmsd_plot_name)
-    # data.txt opens in the dir the code is run in.
+   
     with open('data.txt', 'w') as f:
         for model in color_matrix_all:
             f.write(model + "\n")
@@ -171,13 +169,13 @@ def eval_model_qualities(l_dict, labels ,  i_dict=False, f_dict=False, rmsd_plot
 
 def make_rmsd_plot_all_at_one(l_dict, labels, rmsd_plot_name="rmsd_plot", base_name="rmsd_plot"):
 
-    # MHC class 1 hardcoded structures
-    # rigid_models = ['1ao7', '1mwa', '2bnr', '2nx5', '2pye', '3dxa', '3pwp','3qdg', '3qdj', '3utt', '3vxr', '3vxs', '5c0a', '5c0b', '5c0c', '5c07', '5c09', '5hyj', '5ivx', '5nme', '5nmf']
-    # medium_models = [model for model in l_dict if model not in rigid_models]
+    # Class 1
+    rigid_models = ['1ao7', '1mwa', '2bnr', '2nx5', '2pye', '3dxa', '3pwp','3qdg', '3qdj', '3utt', '3vxr', '3vxs', '5c0a', '5c0b', '5c0c', '5c07', '5c09', '5hyj', '5ivx', '5nme', '5nmf']
+    medium_models = [model for model in l_dict if model not in rigid_models]
 
-    # MHC class 2 hardcoded structures
-    rigid_models = ['2iam', '2ian', '6cql', '6cqq', '6cqr']
-    medium_models = [model for model in l_dict if model not in rigid_models] # == 2pxy
+    # Class 2
+    # rigid_models = ['2iam', '2ian', '6cql', '6cqq', '6cqr']
+    # medium_models = [model for model in l_dict if model not in rigid_models]
     
     # Define color thresholds        
     rigid_colors = ['white','lightgreen', 'green', 'darkgreen']
