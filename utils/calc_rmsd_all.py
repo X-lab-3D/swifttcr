@@ -8,7 +8,8 @@ Author: Nils Smit, Yannick Aarts, Farzaneh Meimandi Parizi, Wieke Krösschell
 
 """
 Example usage:
-python calculate_rmsd_all.py /path/to/pipeline_dir /path/to/reference_dir /path/to/output_base 4 1
+python calculate_rmsd_all.py /path/to/pipeline_dir /path/to/reference_dir /path/to/output_base number_of_cores MHC_class (1 or 2)
+
 """
 
 """
