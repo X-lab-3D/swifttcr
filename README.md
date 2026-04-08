@@ -1,9 +1,9 @@
 # SwiftTCR: Efficient computational docking protocol of TCRpMHC class I complexes using restricted rotation matrices
 
 ## Overview
-**SwiftTCR** is a fast fourier transform based rigid-body docking tool to predict docking orientations between T-cell receptors (TCR) and peptide-MHC class I complexes.
+**SwiftTCR** is a fast fourier transform based rigid-body docking tool to predict docking orientations between T-cell receptors (TCR) and peptide-MHC class I and class II complexes.
 
-Manuscript link: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v2.full)
+Manuscript link: [SwiftTCR](https://www.biorxiv.org/content/10.1101/2024.05.27.596020v3)
 
 ![SwiftTCR](Flowchart.png)
 
@@ -71,12 +71,17 @@ conda activate swifttcr
 Done! You can now run SwiftTCR by running :
 
 ```bash
-python3 scripts/swift_tcr.py -r </your/input/peptide-mhc> -l </your/input/tcr> -o <output_directory> -op <output_prefix> -c <number_of_cores> -t <clustering_threshold (default=3)> -m <amount_of_models_to_generate>
+python3 scripts/swift_tcr.py -r </your/input/peptide-mhc> -l </your/input/tcr> -o <output_directory> -op <output_prefix> -c <number_of_cores> -t <clustering_threshold (default=3)> -m <amount_of_models_to_generate> -mhc2 <optional>
 ```
 
-**Example command:**
+**Example command with MHC class I:**
 ```bash
 python3 scripts/swift_tcr.py -r example/input/pmhc_1/unbound_structures/3w0w/3w0w_pmhc_renumbered.pdb -l example/input/pmhc_1/unbound_structures/3w0w/3w0w_tcr.pdb -o example/output/ -op first_test -c 6 -t 3 -m 100
+```
+
+**Example command with MHC class II:**
+```bash
+python3 scripts/swift_tcr.py -r example/input/pmhc_2/unbound_structures/6cqr/6cqr_l_u.pdb -l example/input/pmhc_2/unbound_structures/6cqr/6cqr_r_u.pdb -o example/output/ -op first_test_mhc2 -c 6 -t 3 -m 1000 -mhc2
 ```
 
 **Help**
@@ -100,15 +105,20 @@ All dependencies are installed by conda through the swifttcr_install.yml file. W
 * [Plotly: 5.24.1](https://plotly.com/)
 
 ## Reference structures
-The reference structure used in this study was the TCR complex 2BNR. This structure was selected because it represents a complete T-cell receptor, which improves the robustness and reliability of alignments involving incomplete or partial structures.
+The reference structure used in this study was the TCR complex 2BNR. This structure was selected because it represents a complete T-cell receptor, which improves the robustness and reliability of alignments involving incomplete or partial structures. For MHC class II, the reference structure 2IAM was used.
 
 ## Output SwiftTCR
 
 ### Output Structure Naming Convention initial placement
 
-#### Peptide-MHC Chains
+#### Peptide-MHC-I Chains
 - **A** = MHC (Not IMGT numbered)
 - **B** = β2m (Not IMGT numbered)
+- **C** = Peptide (Not IMGT numbered)
+
+#### Peptide-MHC-II Chains
+- **A** = MHC-α chain (Not IMGT numbered)
+- **B** = MHC-β chain (Not IMGT numbered)
 - **C** = Peptide (Not IMGT numbered)
 
 #### TCR Chains
@@ -245,7 +255,7 @@ In addition to the ANARCI renumbering, chain IDs have been modified to match the
 ## Experimental features
 
 ### pMHC Class II Support
-Currently, SwiftTCR only support pMHC-I complexes but we are currently experimenting with pMHC-II implementation. Star the project to follow for updates. 
+Currently, SwiftTCR supports pMHC-II complexes but we are currently experimenting to improve its performance. Star the project to follow for updates. 
 
 ## Useful links
 
