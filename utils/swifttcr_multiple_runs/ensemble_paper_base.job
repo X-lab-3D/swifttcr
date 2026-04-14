@@ -8,6 +8,14 @@
 #SBATCH --error=/pdbName_%j.err
 #SBATCH --output=/pdbName_%j.out
 
+# ====================================================================================================
+# Script: ensemble_paper_base.job
+# Purpose: Runs SwiftTCR and tars the merged directory to safe disk space (Inodes). This script is 
+# possible to run for single run and ensemble-based docking. This script is able to run 1 case.
+# Author: Wieke Krösschell
+# Usage: sbatch ensemble_paper_base.job
+# ====================================================================================================
+
 # Activates conda enviroment
 source activate swifttcr
 
@@ -18,12 +26,12 @@ mkdir pdbName
 echo "Path to output: ${TMPDIR}"
 
 # Variable inputs, change to your own
-INPUT_TCR_DIR="/pdbName"
-INPUT_MHC_DIR="/pdbName"
-OUTPUT_DIR="/pdbName"
-TEMP_OUTPUT_DIR="${TMPDIR}/pdbName"
-SWIFTTCR_PATH="/swifttcr/scripts/swift_tcr.py"
+INPUT_TCR_DIR="/pdbName" # Directory containing TCR of 1 case (pdbName)
+INPUT_MHC_DIR="/pdbName" # Directory containing MHC of 1 case (pdbName)
+OUTPUT_DIR="/pdbName" # Directory of the docking output
+SWIFTTCR_PATH="/swifttcr/scripts/swift_tcr.py" # Path to SwiftTCR
 
+TEMP_OUTPUT_DIR="${TMPDIR}/pdbName" # Not to be changed, only case name
 
 # Docks every TCR in the input directory to every pMHC in the input directory
 for mhc_file in "$INPUT_MHC_DIR"/*; do
@@ -39,13 +47,13 @@ for mhc_file in "$INPUT_MHC_DIR"/*; do
         base_tcr="${tcr_file##*/}"
         base_mhc="${mhc_file##*/}"
         mhc_name="${base_mhc%.*}" 
-        name="${base_tcr%.*}_${mhc_name#*_}" 
+        name="${base_tcr%.*}_${mhc_name#*_}" # name of case 
         echo "$name"
 
         # Only runs swifttcr if tarred results do not exist yet
         if [ ! -f "${OUTPUT_DIR}/${name}/merged.tar" ]; then
 
-            # Subshell to go to SwiftTCR and still being in TMPDIR
+            # Subshell to go to SwiftTCR while still being in TMPDIR
             ( cd /swifttcr || { echo "Unable to change to Swifttcr dir"; exit 1; } 
 
             # Runs SwiftTCR
@@ -57,8 +65,9 @@ for mhc_file in "$INPUT_MHC_DIR"/*; do
                 -c 16 -t 3 -m 1000
             ) || { echo "Unable to run swifttcr for $name"; exit 1; } 
 
+            # If tarring is not wanted, remove this part
             # Tar merged dir and removes the dir
-            tar -cvf "${TEMP_OUTPUT_DIR}/${name}/merged.tar" -C "${TEMP_OUTPUT_DIR}/${name}" merged && rm -r "${TEMP_OUTPUT_DIR}/${name}/merged" || { echo "tar failed for $name"; exit 1; } # && rm -r "$OUTPUT_DIR" <-- add after practice run and everything works fine
+            tar -cvf "${TEMP_OUTPUT_DIR}/${name}/merged.tar" -C "${TEMP_OUTPUT_DIR}/${name}" merged && rm -r "${TEMP_OUTPUT_DIR}/${name}/merged" || { echo "tar failed for $name"; exit 1; } 
             mkdir -p "${OUTPUT_DIR}"
 
             # Copies the dir with merged.tar to given output dir

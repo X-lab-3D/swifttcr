@@ -17,7 +17,7 @@ def write_rotation_matrix(matrices, outfilename):
 #            for value in matrix.reshape(1, 9)[0]:
 #                f.write(' '+ '%.9f' % value)
             f.write('\n')
-    print("Rotation matrices wrote to: ", outfilename)
+    print("Rotation matrices written to: ", outfilename)
 
 """
 
@@ -279,7 +279,7 @@ def calc_crossing_incident_angle(xyzCYS_D, xyzCYS_E, xyzMHC, xyzTCR, ref_pointMH
 
     return (crossing_angle_degrees, incident_angle_degrees)
 
-def filter_crossing_incident_angle(R_list, reference_rec, reference_lig, cross_min, cross_max, incident_min, incident_max):
+def filter_crossing_incident_angle(R_list, reference_rec, reference_lig, cross_min, cross_max, incident_min, incident_max, mhc_2):
     """Filter a list of rotation matrices based on the incident and crossing angle of a reference structure.
 
     Input: R_list (list), list of rotation matrices.
@@ -293,20 +293,42 @@ def filter_crossing_incident_angle(R_list, reference_rec, reference_lig, cross_m
     R_list_filtered = set()
     rot_mat_cr_in_list = []
 
-    #get relevant coordinates from reference structure to calculate crossing and incident angle.
-    ref_model_rec = pdb2sql(reference_rec)
-    ref_model_lig = pdb2sql(reference_lig)
-    xyzCYS_D = ref_model_lig.get('x,y,z', chainID = ['D'], name = ['CA'], resName = ['CYS'], resSeq = [23, 104])
-    xyzCYS_E = ref_model_lig.get('x,y,z', chainID = ['E'], name = ['CA'], resName = ['CYS'], resSeq = [23, 104])
-    helix1 = [i for i in range(50, 86)]
-    helix2 = [i for i in range(138, 176)]
-    xyzMHC = ref_model_rec.get('x,y,z', chainID = ['A'], resSeq = helix1 + helix2, name = ['CA'])
-    xyzTCR = ref_model_lig.get('x,y,z', chainID = ['D', 'E'], resSeq = [i for i in range(1, 128)], name = ['CA']) # TCR variable domain
 
-    # ref_points are used to determine the direction of PCs
-    ref_pointMHC = ref_model_rec.get('x,y,z', chainID = ['A'], resSeq = ['86']) # a residue at the C-ter end of the MHC alpha1 helix. Is used for determine the direction of PC1_mhc and PC2_mhc
-    ref_pointTCR = ref_model_lig.get('x,y,z', chainID = ['D'], resSeq = ['97'], name = ['CA']) # a residue in TCR chain D near the constant domain. Used for determine the direction of PC2_TCR (TCR inter-domain vector)
-    #ref_pointCYS = ref_model_lig.get('x,y,z', chainID = ['E'], resSeq = ['86'], name = ['CA']) # not needed
+    if mhc_2:
+        # The angles for MHC 2 are calculated
+        #get relevant coordinates from reference structure to calculate crossing and incident angle.
+        ref_model_rec = pdb2sql(reference_rec)
+        ref_model_lig = pdb2sql(reference_lig)
+        xyzCYS_D = ref_model_lig.get('x,y,z', chainID = ['D'], name = ['CA'], resName = ['CYS'], resSeq = [23, 104])
+        xyzCYS_E = ref_model_lig.get('x,y,z', chainID = ['E'], name = ['CA'], resName = ['CYS'], resSeq = [23, 104])
+        helix1 = [i for i in range(50, 78)]
+        helix2 = [i for i in range(51, 86)]
+        xyzMHCa = ref_model_rec.get('x,y,z', chainID = ['A'], resSeq = helix1, name = ['CA'])
+        xyzMHCb = ref_model_rec.get('x,y,z', chainID = ['B'], resSeq = helix2, name = ['CA'])
+        xyzMHC = xyzMHCa + xyzMHCb
+        xyzTCR = ref_model_lig.get('x,y,z', chainID = ['D', 'E'], resSeq = [i for i in range(1, 128)], name = ['CA']) # TCR variable domain
+
+        # ref_points are used to determine the direction of PCs
+        ref_pointMHC = ref_model_rec.get('x,y,z', chainID = ['A'], resSeq = ['78']) # a residue at the C-ter end of the MHC alpha1 helix. Is used for determine the direction of PC1_mhc and PC2_mhc
+        ref_pointTCR = ref_model_lig.get('x,y,z', chainID = ['D'], resSeq = ['97'], name = ['CA']) # a residue in TCR chain D near the constant domain. Used for determine the direction of PC2_TCR (TCR inter-domain vector)
+        #ref_pointCYS = ref_model_lig.get('x,y,z', chainID = ['E'], resSeq = ['86'], name = ['CA']) # not needed
+
+    else:
+        # The angles for MHC 1 are calculated
+        #get relevant coordinates from reference structure to calculate crossing and incident angle.
+        ref_model_rec = pdb2sql(reference_rec)
+        ref_model_lig = pdb2sql(reference_lig)
+        xyzCYS_D = ref_model_lig.get('x,y,z', chainID = ['D'], name = ['CA'], resName = ['CYS'], resSeq = [23, 104])
+        xyzCYS_E = ref_model_lig.get('x,y,z', chainID = ['E'], name = ['CA'], resName = ['CYS'], resSeq = [23, 104])
+        helix1 = [i for i in range(50, 86)]
+        helix2 = [i for i in range(138, 176)]
+        xyzMHC = ref_model_rec.get('x,y,z', chainID = ['A'], resSeq = helix1 + helix2, name = ['CA'])
+        xyzTCR = ref_model_lig.get('x,y,z', chainID = ['D', 'E'], resSeq = [i for i in range(1, 128)], name = ['CA']) # TCR variable domain
+
+        # ref_points are used to determine the direction of PCs
+        ref_pointMHC = ref_model_rec.get('x,y,z', chainID = ['A'], resSeq = ['86']) # a residue at the C-ter end of the MHC alpha1 helix. Is used for determine the direction of PC1_mhc and PC2_mhc
+        ref_pointTCR = ref_model_lig.get('x,y,z', chainID = ['D'], resSeq = ['97'], name = ['CA']) # a residue in TCR chain D near the constant domain. Used for determine the direction of PC2_TCR (TCR inter-domain vector)
+        #ref_pointCYS = ref_model_lig.get('x,y,z', chainID = ['E'], resSeq = ['86'], name = ['CA']) # not needed
 
     for i, r_string in enumerate(R_list):
         rot_mat = R.from_matrix(from_string(r_string))
@@ -323,9 +345,11 @@ def filter_crossing_incident_angle(R_list, reference_rec, reference_lig, cross_m
     print(f"Reduced sampling Done. Unique rotations: {len(R_list_filtered)}")
     return R_list_filtered, rot_mat_cr_in_list
 
+
 def rotate(xyz, rot_mat, inverse = False):
     r = R.from_matrix(rot_mat)
     return r.apply(xyz, inverse)
+
 
 def write_naive_rotationset(prmFL = 'naive_sampling.prm', n_samples = 60):
     # n_samples: the number of samples between -180 and 180
@@ -344,25 +368,42 @@ def write_naive_rotationset(prmFL = 'naive_sampling.prm', n_samples = 60):
 
 
 def main():
+    # Change to True if MHC is class 2 and to False if MHC is class 1
+    mhc_2 = True
 
-    #reference_rec = '/home/jaarts/experiments/generated_rotations_from_angle/input_new/1ao7_l_u.pdb'
-    #reference_lig = '/home/jaarts/experiments/generated_rotations_from_angle/input_new/1ao7_r_u.pdb'
-    reference_rec = 'ref_pdb/2bnr_l_u.pdb' # rec: pMHC
-    reference_lig = 'ref_pdb/2bnr_r_u.pdb' # lig: TCR
-    steps = 60
-    cross_min = 15
-    cross_max = 90
-    incident_min = 0
-    incident_max = 35
-    print(f"steps: {steps}")
-    print(f"cross_min = {cross_min}, cross_max={cross_max}, incident_min = {incident_min}, incident_max ={incident_max}")
+    if mhc_2:
+        reference_rec = 'ref/pmhc_2/2iam_l_u.pdb' # rec: pMHC
+        reference_lig = 'ref/pmhc_2/2iam_r_u.pdb' # lig: TCR
+
+        steps = 60
+        cross_min = 15
+        cross_max = 91
+        incident_min = 0
+        incident_max = 37    
+        print(f"MHC class: 2")
+        print(f"steps: {steps}")
+        print(f"cross_min = {cross_min}, cross_max = {cross_max}, incident_min = {incident_min}, incident_max = {incident_max}")
+
+    else:
+        reference_rec = 'ref/pmhc_1/2bnr_l_u.pdb' # rec: pMHC
+        reference_lig = 'ref/pmhc_1/2bnr_r_u.pdb' # lig: TCR
+
+        steps = 60
+        cross_min = 15
+        cross_max = 90
+        incident_min = 0
+        incident_max = 35    
+        print(f"MHC class: 1")
+        print(f"steps: {steps}")
+        print(f"cross_min = {cross_min}, cross_max = {cross_max}, incident_min = {incident_min}, incident_max = {incident_max}")
+
 
     # write rotation matrices for uniform sampling
     R_list = uniform_sampling(steps)
     write_rotation_matrix(R_list, f"data/uniform_sampling.prm")
 
     # write rotation matrices for reduced sampling
-    R_list_filtered, rot_mat_cr_in_list = filter_crossing_incident_angle(R_list, reference_rec, reference_lig, cross_min, cross_max, incident_min, incident_max)
+    R_list_filtered, rot_mat_cr_in_list = filter_crossing_incident_angle(R_list, reference_rec, reference_lig, cross_min, cross_max, incident_min, incident_max, mhc_2)
     write_rotation_matrix(R_list_filtered, "data/reduced_sampling.prm")
 
     # write rotation matrices for naive sampling

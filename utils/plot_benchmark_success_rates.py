@@ -169,8 +169,13 @@ def eval_model_qualities(l_dict, labels ,  i_dict=False, f_dict=False, rmsd_plot
 
 def make_rmsd_plot_all_at_one(l_dict, labels, rmsd_plot_name="rmsd_plot", base_name="rmsd_plot"):
 
+    # Class 1
     rigid_models = ['1ao7', '1mwa', '2bnr', '2nx5', '2pye', '3dxa', '3pwp','3qdg', '3qdj', '3utt', '3vxr', '3vxs', '5c0a', '5c0b', '5c0c', '5c07', '5c09', '5hyj', '5ivx', '5nme', '5nmf']
     medium_models = [model for model in l_dict if model not in rigid_models]
+
+    # Class 2
+    # rigid_models = ['2iam', '2ian', '6cql', '6cqq', '6cqr']
+    # medium_models = [model for model in l_dict if model not in rigid_models]
     
     # Define color thresholds        
     rigid_colors = ['white','lightgreen', 'green', 'darkgreen']

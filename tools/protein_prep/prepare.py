@@ -5,6 +5,7 @@ import os.path
 import sys
 import os
 import random
+import random
 
 def add_missing_chain(file, out_file):
     with open(out_file, 'w') as out_f, open(file) as f:
@@ -181,10 +182,11 @@ def pdbpqr(base_dir, pdb, chains):
         pqr  # Output PQR file
     ]
 
-    # Makes sure that every log file has its own file and creates a possibility for multiple parallel runs
+    # Makes sure that every log file has its own file and creates a possibility for multiple parallel runs.
     rand = random.randint(0, 10000000)
 
     # Running the PDB2PQR process
+    with open(f"error_log_{rand}", 'a') as err_out, open(f"output_log_{rand}", 'a') as out_f:
     with open(f"error_log_{rand}", 'a') as err_out, open(f"output_log_{rand}", 'a') as out_f:
         subprocess.call(pdb2pqr_command, stdout=out_f, stderr=err_out)
 
@@ -199,6 +201,10 @@ def pdbpqr(base_dir, pdb, chains):
     os.unlink(outmol2)
     os.unlink(f'error_log_{rand}')
     os.unlink(f'output_log_{rand}')
+
+
+    # os.unlink('error_log')
+    # os.unlink('output_log')
 
     # Clean up the pmin.log file after processing
     if os.path.exists(pmin_log):
