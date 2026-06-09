@@ -33,6 +33,8 @@ from tools.ANARCI_master.Example_scripts_and_sequences import ImmunoPDB
 if __name__ == "__main__":
     # Get the arguments from the user
     args = pipeline_handler.get_arguments()
+
+    coefficient = os.path.realpath("coefficient/swifttcr_coefficient.prm")
     
     # Gets the reference files and rotations based of if it is a MHC class 1 or 2
     if args.mhc_class_2:
@@ -43,7 +45,6 @@ if __name__ == "__main__":
         reference_ligand = os.path.realpath("ref/pmhc_1/2bnr_r_u.pdb")
         reference_receptor = os.path.realpath("ref/pmhc_1/2bnr_l_u.pdb")
         rotations = os.path.realpath("rotations_and_restraints/pmhc_1/filtered_cr_in_60.prm")
-        coefficient = os.path.realpath("coefficient/swifttcr_coefficient.prm")
     
     restraint_path =  os.path.realpath("rotations_and_restraints/restraintsDE.json")
     amount_of_models = args.models
@@ -170,7 +171,7 @@ if __name__ == "__main__":
     # for now postfilter is not used
     #apply_results.apply_results_main(amount_of_models, None, None,  args.outprefix, os.path.join(output_path, args.outprefix), os.path.join(output_path,rotations), os.path.join(output_path,ligand), cores)
     
-    apply_results.apply_results_main(1000, None, None,  args.outprefix, os.path.join(output_path, "ft.000.00"), os.path.join(output_path,rotations), os.path.join(output_path,ligand), cores)
+    apply_results.apply_results_main(args.models, None, None,  args.outprefix, os.path.join(output_path, "ft.000.00"), os.path.join(output_path,rotations), os.path.join(output_path,ligand), cores)
     time_end_apply_results = time.time()
 
     print(f"Time taken for apply_results: {time_end_apply_results - time_start_apply_results} seconds")    
